@@ -1,0 +1,20 @@
+@ Inventory declarations
+ULAM:ilagay("Sinigang", 150.00).
+ULAM:ilagay("Adobo", 120.00).
+ULAM:ilagay("Kanin", 15.00).
+
+ORDER po {
+    RESIBO:dagdag("Sinigang", 2).
+    RESIBO:dagdag("Kanin", 3).
+}
+
+LUTO na {
+    RESIBO:kalkula().
+}
+
+BAYAD lang {
+    NUMERO bayad_pera = 500.00.
+    NUMERO sukli = RESIBO:bayaran(bayad_pera).
+    RESIBO:ilimbag().
+    RESIBO:linisin().
+}

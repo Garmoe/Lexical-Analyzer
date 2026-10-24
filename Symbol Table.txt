@@ -1,0 +1,873 @@
+JAVArice lexical analysis symbol table
+Input: .\program.rice
+
+SCAN | Line 1, Column 1 | Character: [@] | Class: COMMENT_MARKER
+DFA | Line 1, Column 1 | q0 --[@]--> q904
+SCAN | Line 1, Column 2 | Character: [ ] | Class: COMMENT
+DFA | Line 1, Column 2 | q904 --[ ]--> q904
+SCAN | Line 1, Column 3 | Character: [I] | Class: COMMENT
+DFA | Line 1, Column 3 | q904 --[I]--> q904
+SCAN | Line 1, Column 4 | Character: [n] | Class: COMMENT
+DFA | Line 1, Column 4 | q904 --[n]--> q904
+SCAN | Line 1, Column 5 | Character: [v] | Class: COMMENT
+DFA | Line 1, Column 5 | q904 --[v]--> q904
+SCAN | Line 1, Column 6 | Character: [e] | Class: COMMENT
+DFA | Line 1, Column 6 | q904 --[e]--> q904
+SCAN | Line 1, Column 7 | Character: [n] | Class: COMMENT
+DFA | Line 1, Column 7 | q904 --[n]--> q904
+SCAN | Line 1, Column 8 | Character: [t] | Class: COMMENT
+DFA | Line 1, Column 8 | q904 --[t]--> q904
+SCAN | Line 1, Column 9 | Character: [o] | Class: COMMENT
+DFA | Line 1, Column 9 | q904 --[o]--> q904
+SCAN | Line 1, Column 10 | Character: [r] | Class: COMMENT
+DFA | Line 1, Column 10 | q904 --[r]--> q904
+SCAN | Line 1, Column 11 | Character: [y] | Class: COMMENT
+DFA | Line 1, Column 11 | q904 --[y]--> q904
+SCAN | Line 1, Column 12 | Character: [ ] | Class: COMMENT
+DFA | Line 1, Column 12 | q904 --[ ]--> q904
+SCAN | Line 1, Column 13 | Character: [d] | Class: COMMENT
+DFA | Line 1, Column 13 | q904 --[d]--> q904
+SCAN | Line 1, Column 14 | Character: [e] | Class: COMMENT
+DFA | Line 1, Column 14 | q904 --[e]--> q904
+SCAN | Line 1, Column 15 | Character: [c] | Class: COMMENT
+DFA | Line 1, Column 15 | q904 --[c]--> q904
+SCAN | Line 1, Column 16 | Character: [l] | Class: COMMENT
+DFA | Line 1, Column 16 | q904 --[l]--> q904
+SCAN | Line 1, Column 17 | Character: [a] | Class: COMMENT
+DFA | Line 1, Column 17 | q904 --[a]--> q904
+SCAN | Line 1, Column 18 | Character: [r] | Class: COMMENT
+DFA | Line 1, Column 18 | q904 --[r]--> q904
+SCAN | Line 1, Column 19 | Character: [a] | Class: COMMENT
+DFA | Line 1, Column 19 | q904 --[a]--> q904
+SCAN | Line 1, Column 20 | Character: [t] | Class: COMMENT
+DFA | Line 1, Column 20 | q904 --[t]--> q904
+SCAN | Line 1, Column 21 | Character: [i] | Class: COMMENT
+DFA | Line 1, Column 21 | q904 --[i]--> q904
+SCAN | Line 1, Column 22 | Character: [o] | Class: COMMENT
+DFA | Line 1, Column 22 | q904 --[o]--> q904
+SCAN | Line 1, Column 23 | Character: [n] | Class: COMMENT
+DFA | Line 1, Column 23 | q904 --[n]--> q904
+SCAN | Line 1, Column 24 | Character: [s] | Class: COMMENT
+DFA | Line 1, Column 24 | q904 --[s]--> q904
+SCAN | Line 1, Column 25 | Character: [\r] | Class: COMMENT
+DFA | Line 1, Column 25 | q904 --[\r]--> q904
+SCAN | Line 1, Column 26 | Character: [\n] | Class: WHITESPACE
+DFA | Line 1, Column 26 | q0 --[\n]--> q0
+SCAN | Line 2, Column 1 | Character: [U] | Class: LETTER
+DFA | Line 2, Column 1 | q0 --[U]--> q31
+SCAN | Line 2, Column 2 | Character: [L] | Class: LETTER
+DFA | Line 2, Column 2 | q31 --[L]--> q32
+SCAN | Line 2, Column 3 | Character: [A] | Class: LETTER
+DFA | Line 2, Column 3 | q32 --[A]--> q63
+SCAN | Line 2, Column 4 | Character: [M] | Class: LETTER
+DFA | Line 2, Column 4 | q63 --[M]--> q64
+TOKEN | Line 2, Column 1 | TOKEN_RES_ULAM               | BUILT_IN_OBJECT        | [ULAM]
+SCAN | Line 2, Column 5 | Character: [:] | Class: SYMBOL
+DFA | Line 2, Column 5 | q0 --[:]--> q923
+TOKEN | Line 2, Column 5 | TOKEN_ACCESSOR               | OPERATOR               | [:]
+SCAN | Line 2, Column 6 | Character: [i] | Class: LETTER
+DFA | Line 2, Column 6 | q0 --[i]--> q65
+SCAN | Line 2, Column 7 | Character: [l] | Class: LETTER
+DFA | Line 2, Column 7 | q65 --[l]--> q66
+SCAN | Line 2, Column 8 | Character: [a] | Class: LETTER
+DFA | Line 2, Column 8 | q66 --[a]--> q67
+SCAN | Line 2, Column 9 | Character: [g] | Class: LETTER
+DFA | Line 2, Column 9 | q67 --[g]--> q68
+SCAN | Line 2, Column 10 | Character: [a] | Class: LETTER
+DFA | Line 2, Column 10 | q68 --[a]--> q69
+SCAN | Line 2, Column 11 | Character: [y] | Class: LETTER
+DFA | Line 2, Column 11 | q69 --[y]--> q70
+TOKEN | Line 2, Column 6 | TOKEN_RES_ilagay             | BUILT_IN_METHOD        | [ilagay]
+SCAN | Line 2, Column 12 | Character: [(] | Class: SYMBOL
+DFA | Line 2, Column 12 | q0 --[(]--> q924
+TOKEN | Line 2, Column 12 | TOKEN_LPAREN                 | DELIMITER              | [(]
+SCAN | Line 2, Column 13 | Character: ["] | Class: STRING_DELIMITER
+DFA | Line 2, Column 13 | q0 --["]--> q903
+SCAN | Line 2, Column 14 | Character: [S] | Class: STRING_CHARACTER
+DFA | Line 2, Column 14 | q903 --[S]--> q903
+SCAN | Line 2, Column 15 | Character: [i] | Class: STRING_CHARACTER
+DFA | Line 2, Column 15 | q903 --[i]--> q903
+SCAN | Line 2, Column 16 | Character: [n] | Class: STRING_CHARACTER
+DFA | Line 2, Column 16 | q903 --[n]--> q903
+SCAN | Line 2, Column 17 | Character: [i] | Class: STRING_CHARACTER
+DFA | Line 2, Column 17 | q903 --[i]--> q903
+SCAN | Line 2, Column 18 | Character: [g] | Class: STRING_CHARACTER
+DFA | Line 2, Column 18 | q903 --[g]--> q903
+SCAN | Line 2, Column 19 | Character: [a] | Class: STRING_CHARACTER
+DFA | Line 2, Column 19 | q903 --[a]--> q903
+SCAN | Line 2, Column 20 | Character: [n] | Class: STRING_CHARACTER
+DFA | Line 2, Column 20 | q903 --[n]--> q903
+SCAN | Line 2, Column 21 | Character: [g] | Class: STRING_CHARACTER
+DFA | Line 2, Column 21 | q903 --[g]--> q903
+SCAN | Line 2, Column 22 | Character: ["] | Class: STRING_DELIMITER
+DFA | Line 2, Column 22 | q903 --["]--> q0
+TOKEN | Line 2, Column 13 | TOKEN_SALITA_LITERAL         | STRING_LITERAL         | ["Sinigang"]
+SCAN | Line 2, Column 23 | Character: [,] | Class: SYMBOL
+DFA | Line 2, Column 23 | q0 --[,]--> q921
+TOKEN | Line 2, Column 23 | TOKEN_SEPARATOR              | PUNCTUATION            | [,]
+SCAN | Line 2, Column 24 | Character: [ ] | Class: WHITESPACE
+DFA | Line 2, Column 24 | q0 --[ ]--> q0
+SCAN | Line 2, Column 25 | Character: [1] | Class: DIGIT
+DFA | Line 2, Column 25 | q0 --[1]--> q901
+SCAN | Line 2, Column 26 | Character: [5] | Class: DIGIT
+DFA | Line 2, Column 26 | q901 --[5]--> q901
+SCAN | Line 2, Column 27 | Character: [0] | Class: DIGIT
+DFA | Line 2, Column 27 | q901 --[0]--> q901
+SCAN | Line 2, Column 28 | Character: [.] | Class: DECIMAL_POINT
+DFA | Line 2, Column 28 | q901 --[.]--> q902
+SCAN | Line 2, Column 29 | Character: [0] | Class: DIGIT
+DFA | Line 2, Column 29 | q902 --[0]--> q902
+SCAN | Line 2, Column 30 | Character: [0] | Class: DIGIT
+DFA | Line 2, Column 30 | q902 --[0]--> q902
+TOKEN | Line 2, Column 25 | TOKEN_NUMERO_LITERAL         | DECIMAL_LITERAL        | [150.00]
+SCAN | Line 2, Column 31 | Character: [)] | Class: SYMBOL
+DFA | Line 2, Column 31 | q0 --[)]--> q925
+TOKEN | Line 2, Column 31 | TOKEN_RPAREN                 | DELIMITER              | [)]
+SCAN | Line 2, Column 32 | Character: [.] | Class: SYMBOL
+DFA | Line 2, Column 32 | q0 --[.]--> q920
+TOKEN | Line 2, Column 32 | TOKEN_TERMINATOR             | PUNCTUATION            | [.]
+SCAN | Line 2, Column 33 | Character: [\r] | Class: WHITESPACE
+DFA | Line 2, Column 33 | q0 --[\r]--> q0
+SCAN | Line 2, Column 34 | Character: [\n] | Class: WHITESPACE
+DFA | Line 2, Column 34 | q0 --[\n]--> q0
+SCAN | Line 3, Column 1 | Character: [U] | Class: LETTER
+DFA | Line 3, Column 1 | q0 --[U]--> q31
+SCAN | Line 3, Column 2 | Character: [L] | Class: LETTER
+DFA | Line 3, Column 2 | q31 --[L]--> q32
+SCAN | Line 3, Column 3 | Character: [A] | Class: LETTER
+DFA | Line 3, Column 3 | q32 --[A]--> q63
+SCAN | Line 3, Column 4 | Character: [M] | Class: LETTER
+DFA | Line 3, Column 4 | q63 --[M]--> q64
+TOKEN | Line 3, Column 1 | TOKEN_RES_ULAM               | BUILT_IN_OBJECT        | [ULAM]
+SCAN | Line 3, Column 5 | Character: [:] | Class: SYMBOL
+DFA | Line 3, Column 5 | q0 --[:]--> q923
+TOKEN | Line 3, Column 5 | TOKEN_ACCESSOR               | OPERATOR               | [:]
+SCAN | Line 3, Column 6 | Character: [i] | Class: LETTER
+DFA | Line 3, Column 6 | q0 --[i]--> q65
+SCAN | Line 3, Column 7 | Character: [l] | Class: LETTER
+DFA | Line 3, Column 7 | q65 --[l]--> q66
+SCAN | Line 3, Column 8 | Character: [a] | Class: LETTER
+DFA | Line 3, Column 8 | q66 --[a]--> q67
+SCAN | Line 3, Column 9 | Character: [g] | Class: LETTER
+DFA | Line 3, Column 9 | q67 --[g]--> q68
+SCAN | Line 3, Column 10 | Character: [a] | Class: LETTER
+DFA | Line 3, Column 10 | q68 --[a]--> q69
+SCAN | Line 3, Column 11 | Character: [y] | Class: LETTER
+DFA | Line 3, Column 11 | q69 --[y]--> q70
+TOKEN | Line 3, Column 6 | TOKEN_RES_ilagay             | BUILT_IN_METHOD        | [ilagay]
+SCAN | Line 3, Column 12 | Character: [(] | Class: SYMBOL
+DFA | Line 3, Column 12 | q0 --[(]--> q924
+TOKEN | Line 3, Column 12 | TOKEN_LPAREN                 | DELIMITER              | [(]
+SCAN | Line 3, Column 13 | Character: ["] | Class: STRING_DELIMITER
+DFA | Line 3, Column 13 | q0 --["]--> q903
+SCAN | Line 3, Column 14 | Character: [A] | Class: STRING_CHARACTER
+DFA | Line 3, Column 14 | q903 --[A]--> q903
+SCAN | Line 3, Column 15 | Character: [d] | Class: STRING_CHARACTER
+DFA | Line 3, Column 15 | q903 --[d]--> q903
+SCAN | Line 3, Column 16 | Character: [o] | Class: STRING_CHARACTER
+DFA | Line 3, Column 16 | q903 --[o]--> q903
+SCAN | Line 3, Column 17 | Character: [b] | Class: STRING_CHARACTER
+DFA | Line 3, Column 17 | q903 --[b]--> q903
+SCAN | Line 3, Column 18 | Character: [o] | Class: STRING_CHARACTER
+DFA | Line 3, Column 18 | q903 --[o]--> q903
+SCAN | Line 3, Column 19 | Character: ["] | Class: STRING_DELIMITER
+DFA | Line 3, Column 19 | q903 --["]--> q0
+TOKEN | Line 3, Column 13 | TOKEN_SALITA_LITERAL         | STRING_LITERAL         | ["Adobo"]
+SCAN | Line 3, Column 20 | Character: [,] | Class: SYMBOL
+DFA | Line 3, Column 20 | q0 --[,]--> q921
+TOKEN | Line 3, Column 20 | TOKEN_SEPARATOR              | PUNCTUATION            | [,]
+SCAN | Line 3, Column 21 | Character: [ ] | Class: WHITESPACE
+DFA | Line 3, Column 21 | q0 --[ ]--> q0
+SCAN | Line 3, Column 22 | Character: [1] | Class: DIGIT
+DFA | Line 3, Column 22 | q0 --[1]--> q901
+SCAN | Line 3, Column 23 | Character: [2] | Class: DIGIT
+DFA | Line 3, Column 23 | q901 --[2]--> q901
+SCAN | Line 3, Column 24 | Character: [0] | Class: DIGIT
+DFA | Line 3, Column 24 | q901 --[0]--> q901
+SCAN | Line 3, Column 25 | Character: [.] | Class: DECIMAL_POINT
+DFA | Line 3, Column 25 | q901 --[.]--> q902
+SCAN | Line 3, Column 26 | Character: [0] | Class: DIGIT
+DFA | Line 3, Column 26 | q902 --[0]--> q902
+SCAN | Line 3, Column 27 | Character: [0] | Class: DIGIT
+DFA | Line 3, Column 27 | q902 --[0]--> q902
+TOKEN | Line 3, Column 22 | TOKEN_NUMERO_LITERAL         | DECIMAL_LITERAL        | [120.00]
+SCAN | Line 3, Column 28 | Character: [)] | Class: SYMBOL
+DFA | Line 3, Column 28 | q0 --[)]--> q925
+TOKEN | Line 3, Column 28 | TOKEN_RPAREN                 | DELIMITER              | [)]
+SCAN | Line 3, Column 29 | Character: [.] | Class: SYMBOL
+DFA | Line 3, Column 29 | q0 --[.]--> q920
+TOKEN | Line 3, Column 29 | TOKEN_TERMINATOR             | PUNCTUATION            | [.]
+SCAN | Line 3, Column 30 | Character: [\r] | Class: WHITESPACE
+DFA | Line 3, Column 30 | q0 --[\r]--> q0
+SCAN | Line 3, Column 31 | Character: [\n] | Class: WHITESPACE
+DFA | Line 3, Column 31 | q0 --[\n]--> q0
+SCAN | Line 4, Column 1 | Character: [U] | Class: LETTER
+DFA | Line 4, Column 1 | q0 --[U]--> q31
+SCAN | Line 4, Column 2 | Character: [L] | Class: LETTER
+DFA | Line 4, Column 2 | q31 --[L]--> q32
+SCAN | Line 4, Column 3 | Character: [A] | Class: LETTER
+DFA | Line 4, Column 3 | q32 --[A]--> q63
+SCAN | Line 4, Column 4 | Character: [M] | Class: LETTER
+DFA | Line 4, Column 4 | q63 --[M]--> q64
+TOKEN | Line 4, Column 1 | TOKEN_RES_ULAM               | BUILT_IN_OBJECT        | [ULAM]
+SCAN | Line 4, Column 5 | Character: [:] | Class: SYMBOL
+DFA | Line 4, Column 5 | q0 --[:]--> q923
+TOKEN | Line 4, Column 5 | TOKEN_ACCESSOR               | OPERATOR               | [:]
+SCAN | Line 4, Column 6 | Character: [i] | Class: LETTER
+DFA | Line 4, Column 6 | q0 --[i]--> q65
+SCAN | Line 4, Column 7 | Character: [l] | Class: LETTER
+DFA | Line 4, Column 7 | q65 --[l]--> q66
+SCAN | Line 4, Column 8 | Character: [a] | Class: LETTER
+DFA | Line 4, Column 8 | q66 --[a]--> q67
+SCAN | Line 4, Column 9 | Character: [g] | Class: LETTER
+DFA | Line 4, Column 9 | q67 --[g]--> q68
+SCAN | Line 4, Column 10 | Character: [a] | Class: LETTER
+DFA | Line 4, Column 10 | q68 --[a]--> q69
+SCAN | Line 4, Column 11 | Character: [y] | Class: LETTER
+DFA | Line 4, Column 11 | q69 --[y]--> q70
+TOKEN | Line 4, Column 6 | TOKEN_RES_ilagay             | BUILT_IN_METHOD        | [ilagay]
+SCAN | Line 4, Column 12 | Character: [(] | Class: SYMBOL
+DFA | Line 4, Column 12 | q0 --[(]--> q924
+TOKEN | Line 4, Column 12 | TOKEN_LPAREN                 | DELIMITER              | [(]
+SCAN | Line 4, Column 13 | Character: ["] | Class: STRING_DELIMITER
+DFA | Line 4, Column 13 | q0 --["]--> q903
+SCAN | Line 4, Column 14 | Character: [K] | Class: STRING_CHARACTER
+DFA | Line 4, Column 14 | q903 --[K]--> q903
+SCAN | Line 4, Column 15 | Character: [a] | Class: STRING_CHARACTER
+DFA | Line 4, Column 15 | q903 --[a]--> q903
+SCAN | Line 4, Column 16 | Character: [n] | Class: STRING_CHARACTER
+DFA | Line 4, Column 16 | q903 --[n]--> q903
+SCAN | Line 4, Column 17 | Character: [i] | Class: STRING_CHARACTER
+DFA | Line 4, Column 17 | q903 --[i]--> q903
+SCAN | Line 4, Column 18 | Character: [n] | Class: STRING_CHARACTER
+DFA | Line 4, Column 18 | q903 --[n]--> q903
+SCAN | Line 4, Column 19 | Character: ["] | Class: STRING_DELIMITER
+DFA | Line 4, Column 19 | q903 --["]--> q0
+TOKEN | Line 4, Column 13 | TOKEN_SALITA_LITERAL         | STRING_LITERAL         | ["Kanin"]
+SCAN | Line 4, Column 20 | Character: [,] | Class: SYMBOL
+DFA | Line 4, Column 20 | q0 --[,]--> q921
+TOKEN | Line 4, Column 20 | TOKEN_SEPARATOR              | PUNCTUATION            | [,]
+SCAN | Line 4, Column 21 | Character: [ ] | Class: WHITESPACE
+DFA | Line 4, Column 21 | q0 --[ ]--> q0
+SCAN | Line 4, Column 22 | Character: [1] | Class: DIGIT
+DFA | Line 4, Column 22 | q0 --[1]--> q901
+SCAN | Line 4, Column 23 | Character: [5] | Class: DIGIT
+DFA | Line 4, Column 23 | q901 --[5]--> q901
+SCAN | Line 4, Column 24 | Character: [.] | Class: DECIMAL_POINT
+DFA | Line 4, Column 24 | q901 --[.]--> q902
+SCAN | Line 4, Column 25 | Character: [0] | Class: DIGIT
+DFA | Line 4, Column 25 | q902 --[0]--> q902
+SCAN | Line 4, Column 26 | Character: [0] | Class: DIGIT
+DFA | Line 4, Column 26 | q902 --[0]--> q902
+TOKEN | Line 4, Column 22 | TOKEN_NUMERO_LITERAL         | DECIMAL_LITERAL        | [15.00]
+SCAN | Line 4, Column 27 | Character: [)] | Class: SYMBOL
+DFA | Line 4, Column 27 | q0 --[)]--> q925
+TOKEN | Line 4, Column 27 | TOKEN_RPAREN                 | DELIMITER              | [)]
+SCAN | Line 4, Column 28 | Character: [.] | Class: SYMBOL
+DFA | Line 4, Column 28 | q0 --[.]--> q920
+TOKEN | Line 4, Column 28 | TOKEN_TERMINATOR             | PUNCTUATION            | [.]
+SCAN | Line 4, Column 29 | Character: [\r] | Class: WHITESPACE
+DFA | Line 4, Column 29 | q0 --[\r]--> q0
+SCAN | Line 4, Column 30 | Character: [\n] | Class: WHITESPACE
+DFA | Line 4, Column 30 | q0 --[\n]--> q0
+SCAN | Line 5, Column 1 | Character: [\r] | Class: WHITESPACE
+DFA | Line 5, Column 1 | q0 --[\r]--> q0
+SCAN | Line 5, Column 2 | Character: [\n] | Class: WHITESPACE
+DFA | Line 5, Column 2 | q0 --[\n]--> q0
+SCAN | Line 6, Column 1 | Character: [O] | Class: LETTER
+DFA | Line 6, Column 1 | q0 --[O]--> q136
+SCAN | Line 6, Column 2 | Character: [R] | Class: LETTER
+DFA | Line 6, Column 2 | q136 --[R]--> q137
+SCAN | Line 6, Column 3 | Character: [D] | Class: LETTER
+DFA | Line 6, Column 3 | q137 --[D]--> q138
+SCAN | Line 6, Column 4 | Character: [E] | Class: LETTER
+DFA | Line 6, Column 4 | q138 --[E]--> q139
+SCAN | Line 6, Column 5 | Character: [R] | Class: LETTER
+DFA | Line 6, Column 5 | q139 --[R]--> q140
+TOKEN | Line 6, Column 1 | TOKEN_RES_ORDER              | TRANSACTION_VERB       | [ORDER]
+SCAN | Line 6, Column 6 | Character: [ ] | Class: WHITESPACE
+DFA | Line 6, Column 6 | q0 --[ ]--> q0
+SCAN | Line 6, Column 7 | Character: [p] | Class: LETTER
+DFA | Line 6, Column 7 | q0 --[p]--> q151
+SCAN | Line 6, Column 8 | Character: [o] | Class: LETTER
+DFA | Line 6, Column 8 | q151 --[o]--> q152
+TOKEN | Line 6, Column 7 | TOKEN_NOISE_WORD             | IGNORED_NOISE_WORD     | [po]
+SCAN | Line 6, Column 9 | Character: [ ] | Class: WHITESPACE
+DFA | Line 6, Column 9 | q0 --[ ]--> q0
+SCAN | Line 6, Column 10 | Character: [{] | Class: SYMBOL
+DFA | Line 6, Column 10 | q0 --[{]--> q926
+TOKEN | Line 6, Column 10 | TOKEN_LBRACE                 | DELIMITER              | [{]
+SCAN | Line 6, Column 11 | Character: [\r] | Class: WHITESPACE
+DFA | Line 6, Column 11 | q0 --[\r]--> q0
+SCAN | Line 6, Column 12 | Character: [\n] | Class: WHITESPACE
+DFA | Line 6, Column 12 | q0 --[\n]--> q0
+SCAN | Line 7, Column 1 | Character: [ ] | Class: WHITESPACE
+DFA | Line 7, Column 1 | q0 --[ ]--> q0
+SCAN | Line 7, Column 2 | Character: [ ] | Class: WHITESPACE
+DFA | Line 7, Column 2 | q0 --[ ]--> q0
+SCAN | Line 7, Column 3 | Character: [ ] | Class: WHITESPACE
+DFA | Line 7, Column 3 | q0 --[ ]--> q0
+SCAN | Line 7, Column 4 | Character: [ ] | Class: WHITESPACE
+DFA | Line 7, Column 4 | q0 --[ ]--> q0
+SCAN | Line 7, Column 5 | Character: [R] | Class: LETTER
+DFA | Line 7, Column 5 | q0 --[R]--> q82
+SCAN | Line 7, Column 6 | Character: [E] | Class: LETTER
+DFA | Line 7, Column 6 | q82 --[E]--> q83
+SCAN | Line 7, Column 7 | Character: [S] | Class: LETTER
+DFA | Line 7, Column 7 | q83 --[S]--> q84
+SCAN | Line 7, Column 8 | Character: [I] | Class: LETTER
+DFA | Line 7, Column 8 | q84 --[I]--> q85
+SCAN | Line 7, Column 9 | Character: [B] | Class: LETTER
+DFA | Line 7, Column 9 | q85 --[B]--> q86
+SCAN | Line 7, Column 10 | Character: [O] | Class: LETTER
+DFA | Line 7, Column 10 | q86 --[O]--> q87
+TOKEN | Line 7, Column 5 | TOKEN_RES_RESIBO             | BUILT_IN_OBJECT        | [RESIBO]
+SCAN | Line 7, Column 11 | Character: [:] | Class: SYMBOL
+DFA | Line 7, Column 11 | q0 --[:]--> q923
+TOKEN | Line 7, Column 11 | TOKEN_ACCESSOR               | OPERATOR               | [:]
+SCAN | Line 7, Column 12 | Character: [d] | Class: LETTER
+DFA | Line 7, Column 12 | q0 --[d]--> q88
+SCAN | Line 7, Column 13 | Character: [a] | Class: LETTER
+DFA | Line 7, Column 13 | q88 --[a]--> q89
+SCAN | Line 7, Column 14 | Character: [g] | Class: LETTER
+DFA | Line 7, Column 14 | q89 --[g]--> q90
+SCAN | Line 7, Column 15 | Character: [d] | Class: LETTER
+DFA | Line 7, Column 15 | q90 --[d]--> q91
+SCAN | Line 7, Column 16 | Character: [a] | Class: LETTER
+DFA | Line 7, Column 16 | q91 --[a]--> q92
+SCAN | Line 7, Column 17 | Character: [g] | Class: LETTER
+DFA | Line 7, Column 17 | q92 --[g]--> q93
+TOKEN | Line 7, Column 12 | TOKEN_RES_dagdag             | BUILT_IN_METHOD        | [dagdag]
+SCAN | Line 7, Column 18 | Character: [(] | Class: SYMBOL
+DFA | Line 7, Column 18 | q0 --[(]--> q924
+TOKEN | Line 7, Column 18 | TOKEN_LPAREN                 | DELIMITER              | [(]
+SCAN | Line 7, Column 19 | Character: ["] | Class: STRING_DELIMITER
+DFA | Line 7, Column 19 | q0 --["]--> q903
+SCAN | Line 7, Column 20 | Character: [S] | Class: STRING_CHARACTER
+DFA | Line 7, Column 20 | q903 --[S]--> q903
+SCAN | Line 7, Column 21 | Character: [i] | Class: STRING_CHARACTER
+DFA | Line 7, Column 21 | q903 --[i]--> q903
+SCAN | Line 7, Column 22 | Character: [n] | Class: STRING_CHARACTER
+DFA | Line 7, Column 22 | q903 --[n]--> q903
+SCAN | Line 7, Column 23 | Character: [i] | Class: STRING_CHARACTER
+DFA | Line 7, Column 23 | q903 --[i]--> q903
+SCAN | Line 7, Column 24 | Character: [g] | Class: STRING_CHARACTER
+DFA | Line 7, Column 24 | q903 --[g]--> q903
+SCAN | Line 7, Column 25 | Character: [a] | Class: STRING_CHARACTER
+DFA | Line 7, Column 25 | q903 --[a]--> q903
+SCAN | Line 7, Column 26 | Character: [n] | Class: STRING_CHARACTER
+DFA | Line 7, Column 26 | q903 --[n]--> q903
+SCAN | Line 7, Column 27 | Character: [g] | Class: STRING_CHARACTER
+DFA | Line 7, Column 27 | q903 --[g]--> q903
+SCAN | Line 7, Column 28 | Character: ["] | Class: STRING_DELIMITER
+DFA | Line 7, Column 28 | q903 --["]--> q0
+TOKEN | Line 7, Column 19 | TOKEN_SALITA_LITERAL         | STRING_LITERAL         | ["Sinigang"]
+SCAN | Line 7, Column 29 | Character: [,] | Class: SYMBOL
+DFA | Line 7, Column 29 | q0 --[,]--> q921
+TOKEN | Line 7, Column 29 | TOKEN_SEPARATOR              | PUNCTUATION            | [,]
+SCAN | Line 7, Column 30 | Character: [ ] | Class: WHITESPACE
+DFA | Line 7, Column 30 | q0 --[ ]--> q0
+SCAN | Line 7, Column 31 | Character: [2] | Class: DIGIT
+DFA | Line 7, Column 31 | q0 --[2]--> q901
+TOKEN | Line 7, Column 31 | TOKEN_BUO_LITERAL            | INTEGER_LITERAL        | [2]
+SCAN | Line 7, Column 32 | Character: [)] | Class: SYMBOL
+DFA | Line 7, Column 32 | q0 --[)]--> q925
+TOKEN | Line 7, Column 32 | TOKEN_RPAREN                 | DELIMITER              | [)]
+SCAN | Line 7, Column 33 | Character: [.] | Class: SYMBOL
+DFA | Line 7, Column 33 | q0 --[.]--> q920
+TOKEN | Line 7, Column 33 | TOKEN_TERMINATOR             | PUNCTUATION            | [.]
+SCAN | Line 7, Column 34 | Character: [\r] | Class: WHITESPACE
+DFA | Line 7, Column 34 | q0 --[\r]--> q0
+SCAN | Line 7, Column 35 | Character: [\n] | Class: WHITESPACE
+DFA | Line 7, Column 35 | q0 --[\n]--> q0
+SCAN | Line 8, Column 1 | Character: [ ] | Class: WHITESPACE
+DFA | Line 8, Column 1 | q0 --[ ]--> q0
+SCAN | Line 8, Column 2 | Character: [ ] | Class: WHITESPACE
+DFA | Line 8, Column 2 | q0 --[ ]--> q0
+SCAN | Line 8, Column 3 | Character: [ ] | Class: WHITESPACE
+DFA | Line 8, Column 3 | q0 --[ ]--> q0
+SCAN | Line 8, Column 4 | Character: [ ] | Class: WHITESPACE
+DFA | Line 8, Column 4 | q0 --[ ]--> q0
+SCAN | Line 8, Column 5 | Character: [R] | Class: LETTER
+DFA | Line 8, Column 5 | q0 --[R]--> q82
+SCAN | Line 8, Column 6 | Character: [E] | Class: LETTER
+DFA | Line 8, Column 6 | q82 --[E]--> q83
+SCAN | Line 8, Column 7 | Character: [S] | Class: LETTER
+DFA | Line 8, Column 7 | q83 --[S]--> q84
+SCAN | Line 8, Column 8 | Character: [I] | Class: LETTER
+DFA | Line 8, Column 8 | q84 --[I]--> q85
+SCAN | Line 8, Column 9 | Character: [B] | Class: LETTER
+DFA | Line 8, Column 9 | q85 --[B]--> q86
+SCAN | Line 8, Column 10 | Character: [O] | Class: LETTER
+DFA | Line 8, Column 10 | q86 --[O]--> q87
+TOKEN | Line 8, Column 5 | TOKEN_RES_RESIBO             | BUILT_IN_OBJECT        | [RESIBO]
+SCAN | Line 8, Column 11 | Character: [:] | Class: SYMBOL
+DFA | Line 8, Column 11 | q0 --[:]--> q923
+TOKEN | Line 8, Column 11 | TOKEN_ACCESSOR               | OPERATOR               | [:]
+SCAN | Line 8, Column 12 | Character: [d] | Class: LETTER
+DFA | Line 8, Column 12 | q0 --[d]--> q88
+SCAN | Line 8, Column 13 | Character: [a] | Class: LETTER
+DFA | Line 8, Column 13 | q88 --[a]--> q89
+SCAN | Line 8, Column 14 | Character: [g] | Class: LETTER
+DFA | Line 8, Column 14 | q89 --[g]--> q90
+SCAN | Line 8, Column 15 | Character: [d] | Class: LETTER
+DFA | Line 8, Column 15 | q90 --[d]--> q91
+SCAN | Line 8, Column 16 | Character: [a] | Class: LETTER
+DFA | Line 8, Column 16 | q91 --[a]--> q92
+SCAN | Line 8, Column 17 | Character: [g] | Class: LETTER
+DFA | Line 8, Column 17 | q92 --[g]--> q93
+TOKEN | Line 8, Column 12 | TOKEN_RES_dagdag             | BUILT_IN_METHOD        | [dagdag]
+SCAN | Line 8, Column 18 | Character: [(] | Class: SYMBOL
+DFA | Line 8, Column 18 | q0 --[(]--> q924
+TOKEN | Line 8, Column 18 | TOKEN_LPAREN                 | DELIMITER              | [(]
+SCAN | Line 8, Column 19 | Character: ["] | Class: STRING_DELIMITER
+DFA | Line 8, Column 19 | q0 --["]--> q903
+SCAN | Line 8, Column 20 | Character: [K] | Class: STRING_CHARACTER
+DFA | Line 8, Column 20 | q903 --[K]--> q903
+SCAN | Line 8, Column 21 | Character: [a] | Class: STRING_CHARACTER
+DFA | Line 8, Column 21 | q903 --[a]--> q903
+SCAN | Line 8, Column 22 | Character: [n] | Class: STRING_CHARACTER
+DFA | Line 8, Column 22 | q903 --[n]--> q903
+SCAN | Line 8, Column 23 | Character: [i] | Class: STRING_CHARACTER
+DFA | Line 8, Column 23 | q903 --[i]--> q903
+SCAN | Line 8, Column 24 | Character: [n] | Class: STRING_CHARACTER
+DFA | Line 8, Column 24 | q903 --[n]--> q903
+SCAN | Line 8, Column 25 | Character: ["] | Class: STRING_DELIMITER
+DFA | Line 8, Column 25 | q903 --["]--> q0
+TOKEN | Line 8, Column 19 | TOKEN_SALITA_LITERAL         | STRING_LITERAL         | ["Kanin"]
+SCAN | Line 8, Column 26 | Character: [,] | Class: SYMBOL
+DFA | Line 8, Column 26 | q0 --[,]--> q921
+TOKEN | Line 8, Column 26 | TOKEN_SEPARATOR              | PUNCTUATION            | [,]
+SCAN | Line 8, Column 27 | Character: [ ] | Class: WHITESPACE
+DFA | Line 8, Column 27 | q0 --[ ]--> q0
+SCAN | Line 8, Column 28 | Character: [3] | Class: DIGIT
+DFA | Line 8, Column 28 | q0 --[3]--> q901
+TOKEN | Line 8, Column 28 | TOKEN_BUO_LITERAL            | INTEGER_LITERAL        | [3]
+SCAN | Line 8, Column 29 | Character: [)] | Class: SYMBOL
+DFA | Line 8, Column 29 | q0 --[)]--> q925
+TOKEN | Line 8, Column 29 | TOKEN_RPAREN                 | DELIMITER              | [)]
+SCAN | Line 8, Column 30 | Character: [.] | Class: SYMBOL
+DFA | Line 8, Column 30 | q0 --[.]--> q920
+TOKEN | Line 8, Column 30 | TOKEN_TERMINATOR             | PUNCTUATION            | [.]
+SCAN | Line 8, Column 31 | Character: [\r] | Class: WHITESPACE
+DFA | Line 8, Column 31 | q0 --[\r]--> q0
+SCAN | Line 8, Column 32 | Character: [\n] | Class: WHITESPACE
+DFA | Line 8, Column 32 | q0 --[\n]--> q0
+SCAN | Line 9, Column 1 | Character: [}] | Class: SYMBOL
+DFA | Line 9, Column 1 | q0 --[}]--> q927
+TOKEN | Line 9, Column 1 | TOKEN_RBRACE                 | DELIMITER              | [}]
+SCAN | Line 9, Column 2 | Character: [\r] | Class: WHITESPACE
+DFA | Line 9, Column 2 | q0 --[\r]--> q0
+SCAN | Line 9, Column 3 | Character: [\n] | Class: WHITESPACE
+DFA | Line 9, Column 3 | q0 --[\n]--> q0
+SCAN | Line 10, Column 1 | Character: [\r] | Class: WHITESPACE
+DFA | Line 10, Column 1 | q0 --[\r]--> q0
+SCAN | Line 10, Column 2 | Character: [\n] | Class: WHITESPACE
+DFA | Line 10, Column 2 | q0 --[\n]--> q0
+SCAN | Line 11, Column 1 | Character: [L] | Class: LETTER
+DFA | Line 11, Column 1 | q0 --[L]--> q1
+SCAN | Line 11, Column 2 | Character: [U] | Class: LETTER
+DFA | Line 11, Column 2 | q1 --[U]--> q141
+SCAN | Line 11, Column 3 | Character: [T] | Class: LETTER
+DFA | Line 11, Column 3 | q141 --[T]--> q142
+SCAN | Line 11, Column 4 | Character: [O] | Class: LETTER
+DFA | Line 11, Column 4 | q142 --[O]--> q143
+TOKEN | Line 11, Column 1 | TOKEN_RES_LUTO               | TRANSACTION_VERB       | [LUTO]
+SCAN | Line 11, Column 5 | Character: [ ] | Class: WHITESPACE
+DFA | Line 11, Column 5 | q0 --[ ]--> q0
+SCAN | Line 11, Column 6 | Character: [n] | Class: LETTER
+DFA | Line 11, Column 6 | q0 --[n]--> q153
+SCAN | Line 11, Column 7 | Character: [a] | Class: LETTER
+DFA | Line 11, Column 7 | q153 --[a]--> q154
+TOKEN | Line 11, Column 6 | TOKEN_NOISE_WORD             | IGNORED_NOISE_WORD     | [na]
+SCAN | Line 11, Column 8 | Character: [ ] | Class: WHITESPACE
+DFA | Line 11, Column 8 | q0 --[ ]--> q0
+SCAN | Line 11, Column 9 | Character: [{] | Class: SYMBOL
+DFA | Line 11, Column 9 | q0 --[{]--> q926
+TOKEN | Line 11, Column 9 | TOKEN_LBRACE                 | DELIMITER              | [{]
+SCAN | Line 11, Column 10 | Character: [\r] | Class: WHITESPACE
+DFA | Line 11, Column 10 | q0 --[\r]--> q0
+SCAN | Line 11, Column 11 | Character: [\n] | Class: WHITESPACE
+DFA | Line 11, Column 11 | q0 --[\n]--> q0
+SCAN | Line 12, Column 1 | Character: [ ] | Class: WHITESPACE
+DFA | Line 12, Column 1 | q0 --[ ]--> q0
+SCAN | Line 12, Column 2 | Character: [ ] | Class: WHITESPACE
+DFA | Line 12, Column 2 | q0 --[ ]--> q0
+SCAN | Line 12, Column 3 | Character: [ ] | Class: WHITESPACE
+DFA | Line 12, Column 3 | q0 --[ ]--> q0
+SCAN | Line 12, Column 4 | Character: [ ] | Class: WHITESPACE
+DFA | Line 12, Column 4 | q0 --[ ]--> q0
+SCAN | Line 12, Column 5 | Character: [R] | Class: LETTER
+DFA | Line 12, Column 5 | q0 --[R]--> q82
+SCAN | Line 12, Column 6 | Character: [E] | Class: LETTER
+DFA | Line 12, Column 6 | q82 --[E]--> q83
+SCAN | Line 12, Column 7 | Character: [S] | Class: LETTER
+DFA | Line 12, Column 7 | q83 --[S]--> q84
+SCAN | Line 12, Column 8 | Character: [I] | Class: LETTER
+DFA | Line 12, Column 8 | q84 --[I]--> q85
+SCAN | Line 12, Column 9 | Character: [B] | Class: LETTER
+DFA | Line 12, Column 9 | q85 --[B]--> q86
+SCAN | Line 12, Column 10 | Character: [O] | Class: LETTER
+DFA | Line 12, Column 10 | q86 --[O]--> q87
+TOKEN | Line 12, Column 5 | TOKEN_RES_RESIBO             | BUILT_IN_OBJECT        | [RESIBO]
+SCAN | Line 12, Column 11 | Character: [:] | Class: SYMBOL
+DFA | Line 12, Column 11 | q0 --[:]--> q923
+TOKEN | Line 12, Column 11 | TOKEN_ACCESSOR               | OPERATOR               | [:]
+SCAN | Line 12, Column 12 | Character: [k] | Class: LETTER
+DFA | Line 12, Column 12 | q0 --[k]--> q76
+SCAN | Line 12, Column 13 | Character: [a] | Class: LETTER
+DFA | Line 12, Column 13 | q76 --[a]--> q99
+SCAN | Line 12, Column 14 | Character: [l] | Class: LETTER
+DFA | Line 12, Column 14 | q99 --[l]--> q100
+SCAN | Line 12, Column 15 | Character: [k] | Class: LETTER
+DFA | Line 12, Column 15 | q100 --[k]--> q101
+SCAN | Line 12, Column 16 | Character: [u] | Class: LETTER
+DFA | Line 12, Column 16 | q101 --[u]--> q102
+SCAN | Line 12, Column 17 | Character: [l] | Class: LETTER
+DFA | Line 12, Column 17 | q102 --[l]--> q103
+SCAN | Line 12, Column 18 | Character: [a] | Class: LETTER
+DFA | Line 12, Column 18 | q103 --[a]--> q104
+TOKEN | Line 12, Column 12 | TOKEN_RES_kalkula            | BUILT_IN_METHOD        | [kalkula]
+SCAN | Line 12, Column 19 | Character: [(] | Class: SYMBOL
+DFA | Line 12, Column 19 | q0 --[(]--> q924
+TOKEN | Line 12, Column 19 | TOKEN_LPAREN                 | DELIMITER              | [(]
+SCAN | Line 12, Column 20 | Character: [)] | Class: SYMBOL
+DFA | Line 12, Column 20 | q0 --[)]--> q925
+TOKEN | Line 12, Column 20 | TOKEN_RPAREN                 | DELIMITER              | [)]
+SCAN | Line 12, Column 21 | Character: [.] | Class: SYMBOL
+DFA | Line 12, Column 21 | q0 --[.]--> q920
+TOKEN | Line 12, Column 21 | TOKEN_TERMINATOR             | PUNCTUATION            | [.]
+SCAN | Line 12, Column 22 | Character: [\r] | Class: WHITESPACE
+DFA | Line 12, Column 22 | q0 --[\r]--> q0
+SCAN | Line 12, Column 23 | Character: [\n] | Class: WHITESPACE
+DFA | Line 12, Column 23 | q0 --[\n]--> q0
+SCAN | Line 13, Column 1 | Character: [}] | Class: SYMBOL
+DFA | Line 13, Column 1 | q0 --[}]--> q927
+TOKEN | Line 13, Column 1 | TOKEN_RBRACE                 | DELIMITER              | [}]
+SCAN | Line 13, Column 2 | Character: [\r] | Class: WHITESPACE
+DFA | Line 13, Column 2 | q0 --[\r]--> q0
+SCAN | Line 13, Column 3 | Character: [\n] | Class: WHITESPACE
+DFA | Line 13, Column 3 | q0 --[\n]--> q0
+SCAN | Line 14, Column 1 | Character: [\r] | Class: WHITESPACE
+DFA | Line 14, Column 1 | q0 --[\r]--> q0
+SCAN | Line 14, Column 2 | Character: [\n] | Class: WHITESPACE
+DFA | Line 14, Column 2 | q0 --[\n]--> q0
+SCAN | Line 15, Column 1 | Character: [B] | Class: LETTER
+DFA | Line 15, Column 1 | q0 --[B]--> q12
+SCAN | Line 15, Column 2 | Character: [A] | Class: LETTER
+DFA | Line 15, Column 2 | q12 --[A]--> q147
+SCAN | Line 15, Column 3 | Character: [Y] | Class: LETTER
+DFA | Line 15, Column 3 | q147 --[Y]--> q148
+SCAN | Line 15, Column 4 | Character: [A] | Class: LETTER
+DFA | Line 15, Column 4 | q148 --[A]--> q149
+SCAN | Line 15, Column 5 | Character: [D] | Class: LETTER
+DFA | Line 15, Column 5 | q149 --[D]--> q150
+TOKEN | Line 15, Column 1 | TOKEN_RES_BAYAD              | TRANSACTION_VERB       | [BAYAD]
+SCAN | Line 15, Column 6 | Character: [ ] | Class: WHITESPACE
+DFA | Line 15, Column 6 | q0 --[ ]--> q0
+SCAN | Line 15, Column 7 | Character: [l] | Class: LETTER
+DFA | Line 15, Column 7 | q0 --[l]--> q123
+SCAN | Line 15, Column 8 | Character: [a] | Class: LETTER
+DFA | Line 15, Column 8 | q123 --[a]--> q155
+SCAN | Line 15, Column 9 | Character: [n] | Class: LETTER
+DFA | Line 15, Column 9 | q155 --[n]--> q156
+SCAN | Line 15, Column 10 | Character: [g] | Class: LETTER
+DFA | Line 15, Column 10 | q156 --[g]--> q157
+TOKEN | Line 15, Column 7 | TOKEN_NOISE_WORD             | IGNORED_NOISE_WORD     | [lang]
+SCAN | Line 15, Column 11 | Character: [ ] | Class: WHITESPACE
+DFA | Line 15, Column 11 | q0 --[ ]--> q0
+SCAN | Line 15, Column 12 | Character: [{] | Class: SYMBOL
+DFA | Line 15, Column 12 | q0 --[{]--> q926
+TOKEN | Line 15, Column 12 | TOKEN_LBRACE                 | DELIMITER              | [{]
+SCAN | Line 15, Column 13 | Character: [\r] | Class: WHITESPACE
+DFA | Line 15, Column 13 | q0 --[\r]--> q0
+SCAN | Line 15, Column 14 | Character: [\n] | Class: WHITESPACE
+DFA | Line 15, Column 14 | q0 --[\n]--> q0
+SCAN | Line 16, Column 1 | Character: [ ] | Class: WHITESPACE
+DFA | Line 16, Column 1 | q0 --[ ]--> q0
+SCAN | Line 16, Column 2 | Character: [ ] | Class: WHITESPACE
+DFA | Line 16, Column 2 | q0 --[ ]--> q0
+SCAN | Line 16, Column 3 | Character: [ ] | Class: WHITESPACE
+DFA | Line 16, Column 3 | q0 --[ ]--> q0
+SCAN | Line 16, Column 4 | Character: [ ] | Class: WHITESPACE
+DFA | Line 16, Column 4 | q0 --[ ]--> q0
+SCAN | Line 16, Column 5 | Character: [N] | Class: LETTER
+DFA | Line 16, Column 5 | q0 --[N]--> q15
+SCAN | Line 16, Column 6 | Character: [U] | Class: LETTER
+DFA | Line 16, Column 6 | q15 --[U]--> q16
+SCAN | Line 16, Column 7 | Character: [M] | Class: LETTER
+DFA | Line 16, Column 7 | q16 --[M]--> q17
+SCAN | Line 16, Column 8 | Character: [E] | Class: LETTER
+DFA | Line 16, Column 8 | q17 --[E]--> q18
+SCAN | Line 16, Column 9 | Character: [R] | Class: LETTER
+DFA | Line 16, Column 9 | q18 --[R]--> q19
+SCAN | Line 16, Column 10 | Character: [O] | Class: LETTER
+DFA | Line 16, Column 10 | q19 --[O]--> q20
+TOKEN | Line 16, Column 5 | TOKEN_KW_NUMERO              | KEYWORD                | [NUMERO]
+SCAN | Line 16, Column 11 | Character: [ ] | Class: WHITESPACE
+DFA | Line 16, Column 11 | q0 --[ ]--> q0
+SCAN | Line 16, Column 12 | Character: [b] | Class: LETTER
+DFA | Line 16, Column 12 | q0 --[b]--> q94
+SCAN | Line 16, Column 13 | Character: [a] | Class: LETTER
+DFA | Line 16, Column 13 | q94 --[a]--> q95
+SCAN | Line 16, Column 14 | Character: [y] | Class: LETTER
+DFA | Line 16, Column 14 | q95 --[y]--> q113
+SCAN | Line 16, Column 15 | Character: [a] | Class: LETTER
+DFA | Line 16, Column 15 | q113 --[a]--> q114
+SCAN | Line 16, Column 16 | Character: [d] | Class: LETTER
+DFA | Line 16, Column 16 | q114 --[d]--> q900
+SCAN | Line 16, Column 17 | Character: [_] | Class: UNDERSCORE
+DFA | Line 16, Column 17 | q900 --[_]--> q900
+SCAN | Line 16, Column 18 | Character: [p] | Class: LETTER
+DFA | Line 16, Column 18 | q900 --[p]--> q900
+SCAN | Line 16, Column 19 | Character: [e] | Class: LETTER
+DFA | Line 16, Column 19 | q900 --[e]--> q900
+SCAN | Line 16, Column 20 | Character: [r] | Class: LETTER
+DFA | Line 16, Column 20 | q900 --[r]--> q900
+SCAN | Line 16, Column 21 | Character: [a] | Class: LETTER
+DFA | Line 16, Column 21 | q900 --[a]--> q900
+TOKEN | Line 16, Column 12 | TOKEN_IDENTIFIER             | IDENTIFIER             | [bayad_pera]
+SCAN | Line 16, Column 22 | Character: [ ] | Class: WHITESPACE
+DFA | Line 16, Column 22 | q0 --[ ]--> q0
+SCAN | Line 16, Column 23 | Character: [=] | Class: SYMBOL
+DFA | Line 16, Column 23 | q0 --[=]--> q939
+TOKEN | Line 16, Column 23 | TOKEN_ASSIGNMENT             | OPERATOR               | [=]
+SCAN | Line 16, Column 24 | Character: [ ] | Class: WHITESPACE
+DFA | Line 16, Column 24 | q0 --[ ]--> q0
+SCAN | Line 16, Column 25 | Character: [5] | Class: DIGIT
+DFA | Line 16, Column 25 | q0 --[5]--> q901
+SCAN | Line 16, Column 26 | Character: [0] | Class: DIGIT
+DFA | Line 16, Column 26 | q901 --[0]--> q901
+SCAN | Line 16, Column 27 | Character: [0] | Class: DIGIT
+DFA | Line 16, Column 27 | q901 --[0]--> q901
+SCAN | Line 16, Column 28 | Character: [.] | Class: DECIMAL_POINT
+DFA | Line 16, Column 28 | q901 --[.]--> q902
+SCAN | Line 16, Column 29 | Character: [0] | Class: DIGIT
+DFA | Line 16, Column 29 | q902 --[0]--> q902
+SCAN | Line 16, Column 30 | Character: [0] | Class: DIGIT
+DFA | Line 16, Column 30 | q902 --[0]--> q902
+TOKEN | Line 16, Column 25 | TOKEN_NUMERO_LITERAL         | DECIMAL_LITERAL        | [500.00]
+SCAN | Line 16, Column 31 | Character: [.] | Class: SYMBOL
+DFA | Line 16, Column 31 | q0 --[.]--> q920
+TOKEN | Line 16, Column 31 | TOKEN_TERMINATOR             | PUNCTUATION            | [.]
+SCAN | Line 16, Column 32 | Character: [\r] | Class: WHITESPACE
+DFA | Line 16, Column 32 | q0 --[\r]--> q0
+SCAN | Line 16, Column 33 | Character: [\n] | Class: WHITESPACE
+DFA | Line 16, Column 33 | q0 --[\n]--> q0
+SCAN | Line 17, Column 1 | Character: [ ] | Class: WHITESPACE
+DFA | Line 17, Column 1 | q0 --[ ]--> q0
+SCAN | Line 17, Column 2 | Character: [ ] | Class: WHITESPACE
+DFA | Line 17, Column 2 | q0 --[ ]--> q0
+SCAN | Line 17, Column 3 | Character: [ ] | Class: WHITESPACE
+DFA | Line 17, Column 3 | q0 --[ ]--> q0
+SCAN | Line 17, Column 4 | Character: [ ] | Class: WHITESPACE
+DFA | Line 17, Column 4 | q0 --[ ]--> q0
+SCAN | Line 17, Column 5 | Character: [N] | Class: LETTER
+DFA | Line 17, Column 5 | q0 --[N]--> q15
+SCAN | Line 17, Column 6 | Character: [U] | Class: LETTER
+DFA | Line 17, Column 6 | q15 --[U]--> q16
+SCAN | Line 17, Column 7 | Character: [M] | Class: LETTER
+DFA | Line 17, Column 7 | q16 --[M]--> q17
+SCAN | Line 17, Column 8 | Character: [E] | Class: LETTER
+DFA | Line 17, Column 8 | q17 --[E]--> q18
+SCAN | Line 17, Column 9 | Character: [R] | Class: LETTER
+DFA | Line 17, Column 9 | q18 --[R]--> q19
+SCAN | Line 17, Column 10 | Character: [O] | Class: LETTER
+DFA | Line 17, Column 10 | q19 --[O]--> q20
+TOKEN | Line 17, Column 5 | TOKEN_KW_NUMERO              | KEYWORD                | [NUMERO]
+SCAN | Line 17, Column 11 | Character: [ ] | Class: WHITESPACE
+DFA | Line 17, Column 11 | q0 --[ ]--> q0
+SCAN | Line 17, Column 12 | Character: [s] | Class: LETTER
+DFA | Line 17, Column 12 | q0 --[s]--> q900
+SCAN | Line 17, Column 13 | Character: [u] | Class: LETTER
+DFA | Line 17, Column 13 | q900 --[u]--> q900
+SCAN | Line 17, Column 14 | Character: [k] | Class: LETTER
+DFA | Line 17, Column 14 | q900 --[k]--> q900
+SCAN | Line 17, Column 15 | Character: [l] | Class: LETTER
+DFA | Line 17, Column 15 | q900 --[l]--> q900
+SCAN | Line 17, Column 16 | Character: [i] | Class: LETTER
+DFA | Line 17, Column 16 | q900 --[i]--> q900
+TOKEN | Line 17, Column 12 | TOKEN_IDENTIFIER             | IDENTIFIER             | [sukli]
+SCAN | Line 17, Column 17 | Character: [ ] | Class: WHITESPACE
+DFA | Line 17, Column 17 | q0 --[ ]--> q0
+SCAN | Line 17, Column 18 | Character: [=] | Class: SYMBOL
+DFA | Line 17, Column 18 | q0 --[=]--> q939
+TOKEN | Line 17, Column 18 | TOKEN_ASSIGNMENT             | OPERATOR               | [=]
+SCAN | Line 17, Column 19 | Character: [ ] | Class: WHITESPACE
+DFA | Line 17, Column 19 | q0 --[ ]--> q0
+SCAN | Line 17, Column 20 | Character: [R] | Class: LETTER
+DFA | Line 17, Column 20 | q0 --[R]--> q82
+SCAN | Line 17, Column 21 | Character: [E] | Class: LETTER
+DFA | Line 17, Column 21 | q82 --[E]--> q83
+SCAN | Line 17, Column 22 | Character: [S] | Class: LETTER
+DFA | Line 17, Column 22 | q83 --[S]--> q84
+SCAN | Line 17, Column 23 | Character: [I] | Class: LETTER
+DFA | Line 17, Column 23 | q84 --[I]--> q85
+SCAN | Line 17, Column 24 | Character: [B] | Class: LETTER
+DFA | Line 17, Column 24 | q85 --[B]--> q86
+SCAN | Line 17, Column 25 | Character: [O] | Class: LETTER
+DFA | Line 17, Column 25 | q86 --[O]--> q87
+TOKEN | Line 17, Column 20 | TOKEN_RES_RESIBO             | BUILT_IN_OBJECT        | [RESIBO]
+SCAN | Line 17, Column 26 | Character: [:] | Class: SYMBOL
+DFA | Line 17, Column 26 | q0 --[:]--> q923
+TOKEN | Line 17, Column 26 | TOKEN_ACCESSOR               | OPERATOR               | [:]
+SCAN | Line 17, Column 27 | Character: [b] | Class: LETTER
+DFA | Line 17, Column 27 | q0 --[b]--> q94
+SCAN | Line 17, Column 28 | Character: [a] | Class: LETTER
+DFA | Line 17, Column 28 | q94 --[a]--> q95
+SCAN | Line 17, Column 29 | Character: [y] | Class: LETTER
+DFA | Line 17, Column 29 | q95 --[y]--> q113
+SCAN | Line 17, Column 30 | Character: [a] | Class: LETTER
+DFA | Line 17, Column 30 | q113 --[a]--> q114
+SCAN | Line 17, Column 31 | Character: [r] | Class: LETTER
+DFA | Line 17, Column 31 | q114 --[r]--> q115
+SCAN | Line 17, Column 32 | Character: [a] | Class: LETTER
+DFA | Line 17, Column 32 | q115 --[a]--> q116
+SCAN | Line 17, Column 33 | Character: [n] | Class: LETTER
+DFA | Line 17, Column 33 | q116 --[n]--> q117
+TOKEN | Line 17, Column 27 | TOKEN_RES_bayaran            | BUILT_IN_METHOD        | [bayaran]
+SCAN | Line 17, Column 34 | Character: [(] | Class: SYMBOL
+DFA | Line 17, Column 34 | q0 --[(]--> q924
+TOKEN | Line 17, Column 34 | TOKEN_LPAREN                 | DELIMITER              | [(]
+SCAN | Line 17, Column 35 | Character: [b] | Class: LETTER
+DFA | Line 17, Column 35 | q0 --[b]--> q94
+SCAN | Line 17, Column 36 | Character: [a] | Class: LETTER
+DFA | Line 17, Column 36 | q94 --[a]--> q95
+SCAN | Line 17, Column 37 | Character: [y] | Class: LETTER
+DFA | Line 17, Column 37 | q95 --[y]--> q113
+SCAN | Line 17, Column 38 | Character: [a] | Class: LETTER
+DFA | Line 17, Column 38 | q113 --[a]--> q114
+SCAN | Line 17, Column 39 | Character: [d] | Class: LETTER
+DFA | Line 17, Column 39 | q114 --[d]--> q900
+SCAN | Line 17, Column 40 | Character: [_] | Class: UNDERSCORE
+DFA | Line 17, Column 40 | q900 --[_]--> q900
+SCAN | Line 17, Column 41 | Character: [p] | Class: LETTER
+DFA | Line 17, Column 41 | q900 --[p]--> q900
+SCAN | Line 17, Column 42 | Character: [e] | Class: LETTER
+DFA | Line 17, Column 42 | q900 --[e]--> q900
+SCAN | Line 17, Column 43 | Character: [r] | Class: LETTER
+DFA | Line 17, Column 43 | q900 --[r]--> q900
+SCAN | Line 17, Column 44 | Character: [a] | Class: LETTER
+DFA | Line 17, Column 44 | q900 --[a]--> q900
+TOKEN | Line 17, Column 35 | TOKEN_IDENTIFIER             | IDENTIFIER             | [bayad_pera]
+SCAN | Line 17, Column 45 | Character: [)] | Class: SYMBOL
+DFA | Line 17, Column 45 | q0 --[)]--> q925
+TOKEN | Line 17, Column 45 | TOKEN_RPAREN                 | DELIMITER              | [)]
+SCAN | Line 17, Column 46 | Character: [.] | Class: SYMBOL
+DFA | Line 17, Column 46 | q0 --[.]--> q920
+TOKEN | Line 17, Column 46 | TOKEN_TERMINATOR             | PUNCTUATION            | [.]
+SCAN | Line 17, Column 47 | Character: [\r] | Class: WHITESPACE
+DFA | Line 17, Column 47 | q0 --[\r]--> q0
+SCAN | Line 17, Column 48 | Character: [\n] | Class: WHITESPACE
+DFA | Line 17, Column 48 | q0 --[\n]--> q0
+SCAN | Line 18, Column 1 | Character: [ ] | Class: WHITESPACE
+DFA | Line 18, Column 1 | q0 --[ ]--> q0
+SCAN | Line 18, Column 2 | Character: [ ] | Class: WHITESPACE
+DFA | Line 18, Column 2 | q0 --[ ]--> q0
+SCAN | Line 18, Column 3 | Character: [ ] | Class: WHITESPACE
+DFA | Line 18, Column 3 | q0 --[ ]--> q0
+SCAN | Line 18, Column 4 | Character: [ ] | Class: WHITESPACE
+DFA | Line 18, Column 4 | q0 --[ ]--> q0
+SCAN | Line 18, Column 5 | Character: [R] | Class: LETTER
+DFA | Line 18, Column 5 | q0 --[R]--> q82
+SCAN | Line 18, Column 6 | Character: [E] | Class: LETTER
+DFA | Line 18, Column 6 | q82 --[E]--> q83
+SCAN | Line 18, Column 7 | Character: [S] | Class: LETTER
+DFA | Line 18, Column 7 | q83 --[S]--> q84
+SCAN | Line 18, Column 8 | Character: [I] | Class: LETTER
+DFA | Line 18, Column 8 | q84 --[I]--> q85
+SCAN | Line 18, Column 9 | Character: [B] | Class: LETTER
+DFA | Line 18, Column 9 | q85 --[B]--> q86
+SCAN | Line 18, Column 10 | Character: [O] | Class: LETTER
+DFA | Line 18, Column 10 | q86 --[O]--> q87
+TOKEN | Line 18, Column 5 | TOKEN_RES_RESIBO             | BUILT_IN_OBJECT        | [RESIBO]
+SCAN | Line 18, Column 11 | Character: [:] | Class: SYMBOL
+DFA | Line 18, Column 11 | q0 --[:]--> q923
+TOKEN | Line 18, Column 11 | TOKEN_ACCESSOR               | OPERATOR               | [:]
+SCAN | Line 18, Column 12 | Character: [i] | Class: LETTER
+DFA | Line 18, Column 12 | q0 --[i]--> q65
+SCAN | Line 18, Column 13 | Character: [l] | Class: LETTER
+DFA | Line 18, Column 13 | q65 --[l]--> q66
+SCAN | Line 18, Column 14 | Character: [i] | Class: LETTER
+DFA | Line 18, Column 14 | q66 --[i]--> q118
+SCAN | Line 18, Column 15 | Character: [m] | Class: LETTER
+DFA | Line 18, Column 15 | q118 --[m]--> q119
+SCAN | Line 18, Column 16 | Character: [b] | Class: LETTER
+DFA | Line 18, Column 16 | q119 --[b]--> q120
+SCAN | Line 18, Column 17 | Character: [a] | Class: LETTER
+DFA | Line 18, Column 17 | q120 --[a]--> q121
+SCAN | Line 18, Column 18 | Character: [g] | Class: LETTER
+DFA | Line 18, Column 18 | q121 --[g]--> q122
+TOKEN | Line 18, Column 12 | TOKEN_RES_ilimbag            | BUILT_IN_METHOD        | [ilimbag]
+SCAN | Line 18, Column 19 | Character: [(] | Class: SYMBOL
+DFA | Line 18, Column 19 | q0 --[(]--> q924
+TOKEN | Line 18, Column 19 | TOKEN_LPAREN                 | DELIMITER              | [(]
+SCAN | Line 18, Column 20 | Character: [)] | Class: SYMBOL
+DFA | Line 18, Column 20 | q0 --[)]--> q925
+TOKEN | Line 18, Column 20 | TOKEN_RPAREN                 | DELIMITER              | [)]
+SCAN | Line 18, Column 21 | Character: [.] | Class: SYMBOL
+DFA | Line 18, Column 21 | q0 --[.]--> q920
+TOKEN | Line 18, Column 21 | TOKEN_TERMINATOR             | PUNCTUATION            | [.]
+SCAN | Line 18, Column 22 | Character: [\r] | Class: WHITESPACE
+DFA | Line 18, Column 22 | q0 --[\r]--> q0
+SCAN | Line 18, Column 23 | Character: [\n] | Class: WHITESPACE
+DFA | Line 18, Column 23 | q0 --[\n]--> q0
+SCAN | Line 19, Column 1 | Character: [ ] | Class: WHITESPACE
+DFA | Line 19, Column 1 | q0 --[ ]--> q0
+SCAN | Line 19, Column 2 | Character: [ ] | Class: WHITESPACE
+DFA | Line 19, Column 2 | q0 --[ ]--> q0
+SCAN | Line 19, Column 3 | Character: [ ] | Class: WHITESPACE
+DFA | Line 19, Column 3 | q0 --[ ]--> q0
+SCAN | Line 19, Column 4 | Character: [ ] | Class: WHITESPACE
+DFA | Line 19, Column 4 | q0 --[ ]--> q0
+SCAN | Line 19, Column 5 | Character: [R] | Class: LETTER
+DFA | Line 19, Column 5 | q0 --[R]--> q82
+SCAN | Line 19, Column 6 | Character: [E] | Class: LETTER
+DFA | Line 19, Column 6 | q82 --[E]--> q83
+SCAN | Line 19, Column 7 | Character: [S] | Class: LETTER
+DFA | Line 19, Column 7 | q83 --[S]--> q84
+SCAN | Line 19, Column 8 | Character: [I] | Class: LETTER
+DFA | Line 19, Column 8 | q84 --[I]--> q85
+SCAN | Line 19, Column 9 | Character: [B] | Class: LETTER
+DFA | Line 19, Column 9 | q85 --[B]--> q86
+SCAN | Line 19, Column 10 | Character: [O] | Class: LETTER
+DFA | Line 19, Column 10 | q86 --[O]--> q87
+TOKEN | Line 19, Column 5 | TOKEN_RES_RESIBO             | BUILT_IN_OBJECT        | [RESIBO]
+SCAN | Line 19, Column 11 | Character: [:] | Class: SYMBOL
+DFA | Line 19, Column 11 | q0 --[:]--> q923
+TOKEN | Line 19, Column 11 | TOKEN_ACCESSOR               | OPERATOR               | [:]
+SCAN | Line 19, Column 12 | Character: [l] | Class: LETTER
+DFA | Line 19, Column 12 | q0 --[l]--> q123
+SCAN | Line 19, Column 13 | Character: [i] | Class: LETTER
+DFA | Line 19, Column 13 | q123 --[i]--> q124
+SCAN | Line 19, Column 14 | Character: [n] | Class: LETTER
+DFA | Line 19, Column 14 | q124 --[n]--> q125
+SCAN | Line 19, Column 15 | Character: [i] | Class: LETTER
+DFA | Line 19, Column 15 | q125 --[i]--> q126
+SCAN | Line 19, Column 16 | Character: [s] | Class: LETTER
+DFA | Line 19, Column 16 | q126 --[s]--> q127
+SCAN | Line 19, Column 17 | Character: [i] | Class: LETTER
+DFA | Line 19, Column 17 | q127 --[i]--> q128
+SCAN | Line 19, Column 18 | Character: [n] | Class: LETTER
+DFA | Line 19, Column 18 | q128 --[n]--> q129
+TOKEN | Line 19, Column 12 | TOKEN_RES_linisin            | BUILT_IN_METHOD        | [linisin]
+SCAN | Line 19, Column 19 | Character: [(] | Class: SYMBOL
+DFA | Line 19, Column 19 | q0 --[(]--> q924
+TOKEN | Line 19, Column 19 | TOKEN_LPAREN                 | DELIMITER              | [(]
+SCAN | Line 19, Column 20 | Character: [)] | Class: SYMBOL
+DFA | Line 19, Column 20 | q0 --[)]--> q925
+TOKEN | Line 19, Column 20 | TOKEN_RPAREN                 | DELIMITER              | [)]
+SCAN | Line 19, Column 21 | Character: [.] | Class: SYMBOL
+DFA | Line 19, Column 21 | q0 --[.]--> q920
+TOKEN | Line 19, Column 21 | TOKEN_TERMINATOR             | PUNCTUATION            | [.]
+SCAN | Line 19, Column 22 | Character: [\r] | Class: WHITESPACE
+DFA | Line 19, Column 22 | q0 --[\r]--> q0
+SCAN | Line 19, Column 23 | Character: [\n] | Class: WHITESPACE
+DFA | Line 19, Column 23 | q0 --[\n]--> q0
+SCAN | Line 20, Column 1 | Character: [}] | Class: SYMBOL
+DFA | Line 20, Column 1 | q0 --[}]--> q927
+TOKEN | Line 20, Column 1 | TOKEN_RBRACE                 | DELIMITER              | [}]
+SCAN | Line 20, Column 2 | Character: [\r] | Class: WHITESPACE
+DFA | Line 20, Column 2 | q0 --[\r]--> q0
+SCAN | Line 20, Column 3 | Character: [\n] | Class: WHITESPACE
+DFA | Line 20, Column 3 | q0 --[\n]--> q0
