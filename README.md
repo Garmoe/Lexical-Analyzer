@@ -28,9 +28,11 @@ classification. A failed keyword path transitions to `q_id`, so a word such
 as `ORDERX` is an identifier, not the `ORDER` keyword followed by another
 token.
 
-The symbol table includes scan records, DFA state transitions, and grouped
-token records. Noise words are classified as `IGNORED_NOISE_WORD` so later
-compiler phases can omit them from the syntax stream.
+The symbol table starts with a clean token table (line, column, lexeme, token,
+and category), followed by the character-by-character scan records and DFA
+state transitions. Noise words are included in the token table as
+`IGNORED_NOISE_WORD` so later compiler phases can omit them from the syntax
+stream.
 
 ### Lexeme & token tables
 
