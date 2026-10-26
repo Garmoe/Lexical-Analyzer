@@ -1,0 +1,11 @@
+@ Error handling demonstration: the errors below are intentional.
+
+@ Unsupported character: the lexer should report an unrecognized character.
+NUMERO total = 100.
+~
+
+@ Missing closing quote: the lexer should report an unterminated string.
+SALITA mensahe = "Hindi naisara ang string
+
+@ Scanning continues after the lexical errors.
+NUMERO kasunod = 25.

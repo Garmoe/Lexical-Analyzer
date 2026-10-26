@@ -1,20 +1,85 @@
-@ Inventory declarations
-ULAM:ilagay("Sinigang", 150.00).
+@ JAVArice canteen checkout program
+
+@ Prepare the menu and initialize the register.
 ULAM:ilagay("Adobo", 120.00).
+ULAM:ilagay("Sinigang", 150.00).
 ULAM:ilagay("Kanin", 15.00).
 
-ORDER po {
-    RESIBO:dagdag("Sinigang", 2).
-    RESIBO:dagdag("Kanin", 3).
+NUMERO bayad_pera = 500.00.
+NUMERO bilang_order = 2.
+NUMERO subtotal = 120.00 * bilang_order + 15.00 * bilang_order.
+LETRA station = "A".
+SALITA customer = "Maya".
+BUO sukli_barya = 0.
+KUNDISYON may_sapat_na_stock = TAMA.
+
+@ Take the customer's order and check the available stock.
+ORDER po na lang {
+    RESIBO:dagdag("Adobo", bilang_order).
+    RESIBO:dagdag("Kanin", bilang_order).
+
+    KUNG ULAM:meron("Adobo") == TAMA && may_sapat_na_stock {
+        ULAM:kumuha("Adobo").
+        ULAM:kumuha("Kanin").
+    } KUNDI {
+        MALI.
+        HINTO.
+    }
 }
 
+@ Prepare the meal and calculate its cost.
 LUTO na {
     RESIBO:kalkula().
+    NUMERO buwis = subtotal / 10.
+    NUMERO kabuuan = subtotal + buwis.
+    NUMERO bawas_presyo = RESIBO:diskwento(kabuuan, 10).
+    NUMERO presyo_bawat_order = RESIBO:hatian(bawas_presyo, bilang_order).
+    NUMERO tira = kabuuan % 10.
+    NUMERO tantiya = kabuuan ^ 1 \ 1.
+
+    KUNG kabuuan KATUMBAS 297.00 && subtotal > 0 &&
+         subtotal < kabuuan && subtotal <= kabuuan &&
+         presyo_bawat_order >= 0 {
+        RESIBO:ilimbag().
+    }
+}
+
+@ Serve the order and accept payment.
+HAIN po {
+    RESIBO:ilimbag() at nang ng ang ay nito opo.
 }
 
 BAYAD lang {
-    NUMERO bayad_pera = 500.00.
-    NUMERO sukli = RESIBO:bayaran(bayad_pera).
-    RESIBO:ilimbag().
-    RESIBO:linisin().
+    KUNDISYON sapat_ang_bayad = bayad_pera >= kabuuan &&
+                                 bayad_pera > subtotal.
+
+    KUNG sapat_ang_bayad == TAMA && bayad_pera != 0 {
+        NUMERO sukli = RESIBO:bayaran(bayad_pera).
+        sukli_barya = sukli.
+
+        KUNG ! (sapat_ang_bayad == MALI) &&
+             (sukli >= 0 || bayad_pera == kabuuan) {
+            RESIBO:ilimbag().
+        }
+    } KUNDI {
+        RESIBO:ilimbag().
+    }
 }
+
+@ Close the register after all orders are complete.
+NUMERO natitirang_order = bilang_order.
+ULIT (natitirang_order > 0) {
+    natitirang_order = natitirang_order - 1.
+
+    KUNG natitirang_order > 0 {
+        TULOY.
+    } KUNDI {
+        HINTO.
+    }
+}
+
+ULAM:bawas("Adobo", bilang_order).
+RESIBO:linisin().
+
+@ Receipt/export markers supported by the lexer.
+; # $
