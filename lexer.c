@@ -355,14 +355,14 @@ static void write_transition(FILE *out, size_t line, size_t column,
     }
 }
 
-static void write_symbol(FILE *out, size_t line, size_t column,
-                         const char *type, const char *classification,
-                         const char *lexeme)
+static void write_symbol_span(FILE *out, const char *type,
+                              const char *lexeme, size_t length)
 {
     const char *cursor;
     size_t displayed_width = 0;
-    fprintf(out, "| %-4zu | %-6zu | ", line, column);
-    for (cursor = lexeme; *cursor != '\0'; ++cursor) {
+    size_t i;
+    fprintf(out, "%-24s | ", type);
+    for (i = 0, cursor = lexeme; i < length; ++i, ++cursor) {
         if (*cursor == '|') {
             fputs("\\|", out);
             displayed_width += 2;
@@ -375,7 +375,12 @@ static void write_symbol(FILE *out, size_t line, size_t column,
         fputc(' ', out);
         ++displayed_width;
     }
-    fprintf(out, " | %-28s | %-22s |\n", type, classification);
+    fputc('\n', out);
+}
+
+static void write_symbol(FILE *out, const char *type, const char *lexeme)
+{
+    write_symbol_span(out, type, lexeme, strlen(lexeme));
 }
 
 static void report_error(FILE *out, size_t line, size_t column,
@@ -383,8 +388,7 @@ static void report_error(FILE *out, size_t line, size_t column,
 {
     fprintf(stderr, "Lexer error at line %zu, column %zu: %s\n",
             line, column, message);
-    fprintf(out, "ERROR | Line %zu, Column %zu | %s\n",
-            line, column, message);
+    write_symbol(out, "INVALID", message);
 }
 
 static int append_char(char **buffer, size_t *length, size_t *capacity,
@@ -510,6 +514,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
         }
 
         if (c == '@') {
+            size_t comment_start = pos;
             int state = STATE_START;
             while (pos < length && source[pos] != '\n') {
                 int current = (unsigned char)source[pos];
@@ -522,6 +527,8 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 ++pos;
                 ++column;
             }
+            write_symbol_span(tokens, "LINE_COMMENT",
+                              source + comment_start, pos - comment_start);
             continue;
         }
 
@@ -548,7 +555,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 char lexeme[MAX_TOKEN_LENGTH];
                 size_t token_length = pos - start;
                 if (token_length >= sizeof lexeme) {
-                    report_error(log, token_line, token_column,
+                    report_error(tokens, token_line, token_column,
                                  "Identifier exceeds maximum supported length.");
                     ++errors;
                     continue;
@@ -556,16 +563,11 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 memcpy(lexeme, source + start, token_length);
                 lexeme[token_length] = '\0';
                 if (accepted == NULL) {
-                    write_symbol(tokens, token_line, token_column,
-                                 "TOKEN_IDENTIFIER", "IDENTIFIER", lexeme);
+                    write_symbol(tokens, "TOKEN_IDENTIFIER", lexeme);
                 } else if (accepted->ignored) {
-                    write_symbol(tokens, token_line, token_column,
-                                 accepted->token_type,
-                                 accepted->classification, lexeme);
+                    write_symbol(tokens, accepted->token_type, lexeme);
                 } else {
-                    write_symbol(tokens, token_line, token_column,
-                                 accepted->token_type,
-                                 accepted->classification, lexeme);
+                    write_symbol(tokens, accepted->token_type, lexeme);
                 }
             }
             continue;
@@ -611,16 +613,14 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 size_t token_length = pos - start;
                 const AcceptingState *accepted = find_accept(state);
                 if (token_length >= sizeof lexeme || accepted == NULL) {
-                    report_error(log, token_line, token_column,
+                    report_error(tokens, token_line, token_column,
                                  "Invalid or oversized numeric literal.");
                     ++errors;
                     continue;
                 }
                 memcpy(lexeme, source + start, token_length);
                 lexeme[token_length] = '\0';
-                write_symbol(tokens, token_line, token_column,
-                             accepted->token_type, accepted->classification,
-                             lexeme);
+                write_symbol(tokens, accepted->token_type, lexeme);
             }
             continue;
         }
@@ -649,7 +649,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 }
             }
             if (!terminated) {
-                report_error(log, token_line, token_column,
+                report_error(tokens, token_line, token_column,
                              "Unterminated string literal.");
                 ++errors;
                 continue;
@@ -658,16 +658,14 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 char lexeme[MAX_TOKEN_LENGTH];
                 size_t token_length = pos - start;
                 if (token_length >= sizeof lexeme) {
-                    report_error(log, token_line, token_column,
+                    report_error(tokens, token_line, token_column,
                                  "String literal exceeds maximum supported length.");
                     ++errors;
                     continue;
                 }
                 memcpy(lexeme, source + start, token_length);
                 lexeme[token_length] = '\0';
-                write_symbol(tokens, token_line, token_column,
-                             "TOKEN_SALITA_LITERAL", "STRING_LITERAL",
-                             lexeme);
+                write_symbol(tokens, "TOKEN_SALITA_LITERAL", lexeme);
             }
             continue;
         }
@@ -685,7 +683,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
             }
             if (state == STATE_ERROR) {
                 write_transition(log, line, column, STATE_START, c, state);
-                report_error(log, token_line, token_column,
+                report_error(tokens, token_line, token_column,
                              "Unrecognized character.");
                 ++errors;
                 ++pos;
@@ -708,13 +706,11 @@ static int scan_source(const char *source, size_t length, FILE *log,
             }
             accepted = find_accept(next_state);
             if (accepted == NULL) {
-                report_error(log, token_line, token_column,
+                report_error(tokens, token_line, token_column,
                              "Invalid symbol transition.");
                 ++errors;
             } else {
-                write_symbol(tokens, token_line, token_column,
-                             accepted->token_type, accepted->classification,
-                             lexeme);
+                write_symbol(tokens, accepted->token_type, lexeme);
             }
             pos += token_length;
             column += token_length;
@@ -789,23 +785,14 @@ int main(int argc, char **argv)
         fclose(token_table);
         return EXIT_FAILURE;
     }
-    fprintf(symbol_table, "JAVArice lexical analysis symbol table\n");
-    fprintf(symbol_table, "Input: %s\n\n", argv[1]);
     fprintf(symbol_table,
-            "TOKENS\n"
-            "| Line | Column | Lexeme                                   | Token                        | Category               |\n"
-            "|------|--------|------------------------------------------|------------------------------|------------------------|\n");
+            "Output: Symbol Table\n"
+            "The generated Symbol Table text file follows this format.\n\n");
+    fprintf(symbol_table, "%-24s | %s\n", "TOKEN TYPE", "LEXEME");
+    fprintf(symbol_table,
+            "------------------------ | ----------------------------------------\n");
     if (!copy_stream(token_table, symbol_table)) {
         fprintf(stderr, "Error writing token table to '%s'.\n",
-                SYMBOL_TABLE_FILE);
-        fclose(scan_log);
-        fclose(token_table);
-        fclose(symbol_table);
-        return EXIT_FAILURE;
-    }
-    fprintf(symbol_table, "\nCHARACTER-BY-CHARACTER SCAN AND DFA LOG\n");
-    if (!copy_stream(scan_log, symbol_table)) {
-        fprintf(stderr, "Error writing scan log to '%s'.\n",
                 SYMBOL_TABLE_FILE);
         fclose(scan_log);
         fclose(token_table);
