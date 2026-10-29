@@ -98,7 +98,8 @@ Run the invalid-token demonstration:
     ./lexer ./program_invalid.rice
 
 The input file must have the .rice extension and contain supported
-printable ASCII text. The lexer creates or replaces "Symbol Table"
+printable ASCII text. The lexer creates or replaces a file named
+"Symbol Table" (with no file extension)
 in the current working directory.
 
 
@@ -118,14 +119,15 @@ reserved word followed by another token.
 SYMBOL TABLE OUTPUT
 -------------------
 
-The generated Symbol Table plain text file uses two columns:
+The generated "Symbol Table" file contains only the token table, with two
+columns:
 
     TOKEN TYPE               | LEXEME
 
 Recognized comments appear as LINE_COMMENT rows. Lexical errors appear as
-INVALID rows. The lexer still processes the source character by character
-through its DFA, but the detailed scan and transition trace is not included
-in the symbol-table file.
+INVALID rows. The lexer processes the source character by character through
+its finite automaton, but does not include scan or transition logs in this
+file.
 
 
 LEXEME AND TOKEN TABLES

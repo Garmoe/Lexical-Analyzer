@@ -327,6 +327,9 @@ static int dfa_step(int state, int c)
 static void write_trace(FILE *out, const char *kind, size_t line,
                         size_t column, int c, const char *classification)
 {
+    if (out == NULL) {
+        return;
+    }
     const char *display = c == '\n' ? "\\n" :
                           c == '\r' ? "\\r" :
                           c == '\t' ? "\\t" : NULL;
@@ -344,6 +347,9 @@ static void write_trace(FILE *out, const char *kind, size_t line,
 static void write_transition(FILE *out, size_t line, size_t column,
                              int from, int c, int to)
 {
+    if (out == NULL) {
+        return;
+    }
     const char *display = c == '\n' ? "\\n" :
                           c == '\r' ? "\\r" :
                           c == '\t' ? "\\t" : NULL;
@@ -755,7 +761,6 @@ int main(int argc, char **argv)
     char *source = NULL;
     size_t source_length = 0;
     FILE *symbol_table;
-    FILE *scan_log;
     FILE *token_table;
     int errors;
 
@@ -770,25 +775,17 @@ int main(int argc, char **argv)
     if (!read_source(argv[1], &source, &source_length)) {
         return EXIT_FAILURE;
     }
-    scan_log = tmpfile();
     token_table = tmpfile();
-    if (scan_log == NULL || token_table == NULL) {
+    if (token_table == NULL) {
         fprintf(stderr, "Cannot create temporary output files: %s\n",
                 strerror(errno));
-        if (scan_log != NULL) {
-            fclose(scan_log);
-        }
-        if (token_table != NULL) {
-            fclose(token_table);
-        }
         free(source);
         return EXIT_FAILURE;
     }
-    errors = scan_source(source, source_length, scan_log, token_table);
+    errors = scan_source(source, source_length, NULL, token_table);
     free(source);
-    if (fflush(scan_log) != 0 || fflush(token_table) != 0) {
+    if (fflush(token_table) != 0) {
         fprintf(stderr, "Error buffering temporary lexer output.\n");
-        fclose(scan_log);
         fclose(token_table);
         return EXIT_FAILURE;
     }
@@ -796,37 +793,23 @@ int main(int argc, char **argv)
     if (symbol_table == NULL) {
         fprintf(stderr, "Cannot create '%s': %s\n",
                 SYMBOL_TABLE_FILE, strerror(errno));
-        fclose(scan_log);
         fclose(token_table);
         return EXIT_FAILURE;
     }
-    fprintf(symbol_table,
-            "Output: Symbol Table\n"
-            "The generated Symbol Table text file follows this format.\n\n");
     fprintf(symbol_table, "%-24s | %s\n", "TOKEN TYPE", "LEXEME");
     fprintf(symbol_table,
             "------------------------ | ----------------------------------------\n");
     if (!copy_stream(token_table, symbol_table)) {
         fprintf(stderr, "Error writing token table to '%s'.\n",
                 SYMBOL_TABLE_FILE);
-        fclose(scan_log);
         fclose(token_table);
         fclose(symbol_table);
         return EXIT_FAILURE;
     }
-    {
-        int close_error = 0;
-        if (fclose(scan_log) != 0) {
-            close_error = 1;
-        }
-        if (fclose(token_table) != 0) {
-            close_error = 1;
-        }
-        if (close_error) {
-            fprintf(stderr, "Error closing temporary output files.\n");
-            fclose(symbol_table);
-            return EXIT_FAILURE;
-        }
+    if (fclose(token_table) != 0) {
+        fprintf(stderr, "Error closing temporary output file.\n");
+        fclose(symbol_table);
+        return EXIT_FAILURE;
     }
     if (fclose(symbol_table) != 0) {
         fprintf(stderr, "Error writing '%s'.\n", SYMBOL_TABLE_FILE);

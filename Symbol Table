@@ -1,6 +1,3 @@
-Output: Symbol Table
-The generated Symbol Table text file follows this format.
-
 TOKEN TYPE               | LEXEME
 ------------------------ | ----------------------------------------
 LINE_COMMENT             | @ JAVArice canteen checkout program    
