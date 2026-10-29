@@ -119,15 +119,16 @@ reserved word followed by another token.
 SYMBOL TABLE OUTPUT
 -------------------
 
-The generated "Symbol Table" file contains only the token table, with two
+The generated "Symbol Table" file starts with the token table, with two
 columns:
 
     TOKEN TYPE               | LEXEME
 
 Recognized comments appear as LINE_COMMENT rows. Lexical errors appear as
-INVALID rows. The lexer processes the source character by character through
-its finite automaton, but does not include scan or transition logs in this
-file.
+INVALID rows. Below the table, the output includes each scanned character,
+the DFA state transitions, and ACCEPT or REJECT records. ACCEPT records show
+the final state, token, and category, making it visible why a word is
+recognized as a keyword, reserved word, or identifier.
 
 
 LEXEME AND TOKEN TABLES

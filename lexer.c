@@ -390,6 +390,17 @@ static void write_symbol(FILE *out, const char *type, const char *lexeme)
     write_symbol_span(out, type, lexeme, strlen(lexeme));
 }
 
+static void write_acceptance(FILE *out, const char *lexeme,
+                             const char *token_type,
+                             const char *classification, int state)
+{
+    if (out != NULL) {
+        fprintf(out,
+                "ACCEPT | [%s] | State: q%d | Token: %s | Class: %s\n",
+                lexeme, state, token_type, classification);
+    }
+}
+
 static void report_error(FILE *out, size_t line, size_t column,
                          const char *message)
 {
@@ -522,6 +533,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
 
         if (c == '@') {
             size_t comment_start = pos;
+            size_t comment_length;
             int state = STATE_START;
             while (pos < length && source[pos] != '\n') {
                 int current = (unsigned char)source[pos];
@@ -534,8 +546,15 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 ++pos;
                 ++column;
             }
+            comment_length = pos - comment_start;
+            if (comment_length > 0 &&
+                source[comment_start + comment_length - 1] == '\r') {
+                --comment_length;
+            }
             write_symbol_span(tokens, "LINE_COMMENT",
-                              source + comment_start, pos - comment_start);
+                              source + comment_start, comment_length);
+            write_acceptance(log, source + comment_start, "LINE_COMMENT",
+                             "COMMENT", state);
             continue;
         }
 
@@ -585,10 +604,16 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 lexeme[token_length] = '\0';
                 if (accepted == NULL) {
                     write_symbol(tokens, "TOKEN_IDENTIFIER", lexeme);
+                    write_acceptance(log, lexeme, "TOKEN_IDENTIFIER",
+                                     "IDENTIFIER", state);
                 } else if (accepted->ignored) {
                     write_symbol(tokens, accepted->token_type, lexeme);
+                    write_acceptance(log, lexeme, accepted->token_type,
+                                     accepted->classification, state);
                 } else {
                     write_symbol(tokens, accepted->token_type, lexeme);
+                    write_acceptance(log, lexeme, accepted->token_type,
+                                     accepted->classification, state);
                 }
             }
             continue;
@@ -642,6 +667,8 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 memcpy(lexeme, source + start, token_length);
                 lexeme[token_length] = '\0';
                 write_symbol(tokens, accepted->token_type, lexeme);
+                write_acceptance(log, lexeme, accepted->token_type,
+                                 accepted->classification, state);
             }
             continue;
         }
@@ -687,6 +714,8 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 memcpy(lexeme, source + start, token_length);
                 lexeme[token_length] = '\0';
                 write_symbol(tokens, "TOKEN_SALITA_LITERAL", lexeme);
+                write_acceptance(log, lexeme, "TOKEN_SALITA_LITERAL",
+                                 "STRING_LITERAL", state);
             }
             continue;
         }
@@ -729,9 +758,15 @@ static int scan_source(const char *source, size_t length, FILE *log,
             if (accepted == NULL) {
                 report_error(tokens, token_line, token_column,
                              "Invalid symbol transition.");
+                if (log != NULL) {
+                    fprintf(log, "REJECT | [%s] | State: q%d | No accepting token\n",
+                            lexeme, next_state);
+                }
                 ++errors;
             } else {
                 write_symbol(tokens, accepted->token_type, lexeme);
+                write_acceptance(log, lexeme, accepted->token_type,
+                                 accepted->classification, next_state);
             }
             pos += token_length;
             column += token_length;
@@ -761,6 +796,7 @@ int main(int argc, char **argv)
     char *source = NULL;
     size_t source_length = 0;
     FILE *symbol_table;
+    FILE *scan_log;
     FILE *token_table;
     int errors;
 
@@ -775,17 +811,25 @@ int main(int argc, char **argv)
     if (!read_source(argv[1], &source, &source_length)) {
         return EXIT_FAILURE;
     }
+    scan_log = tmpfile();
     token_table = tmpfile();
-    if (token_table == NULL) {
+    if (scan_log == NULL || token_table == NULL) {
         fprintf(stderr, "Cannot create temporary output files: %s\n",
                 strerror(errno));
+        if (scan_log != NULL) {
+            fclose(scan_log);
+        }
+        if (token_table != NULL) {
+            fclose(token_table);
+        }
         free(source);
         return EXIT_FAILURE;
     }
-    errors = scan_source(source, source_length, NULL, token_table);
+    errors = scan_source(source, source_length, scan_log, token_table);
     free(source);
-    if (fflush(token_table) != 0) {
+    if (fflush(scan_log) != 0 || fflush(token_table) != 0) {
         fprintf(stderr, "Error buffering temporary lexer output.\n");
+        fclose(scan_log);
         fclose(token_table);
         return EXIT_FAILURE;
     }
@@ -793,6 +837,7 @@ int main(int argc, char **argv)
     if (symbol_table == NULL) {
         fprintf(stderr, "Cannot create '%s': %s\n",
                 SYMBOL_TABLE_FILE, strerror(errno));
+        fclose(scan_log);
         fclose(token_table);
         return EXIT_FAILURE;
     }
@@ -802,6 +847,26 @@ int main(int argc, char **argv)
     if (!copy_stream(token_table, symbol_table)) {
         fprintf(stderr, "Error writing token table to '%s'.\n",
                 SYMBOL_TABLE_FILE);
+        fclose(scan_log);
+        fclose(token_table);
+        fclose(symbol_table);
+        return EXIT_FAILURE;
+    }
+    fprintf(symbol_table,
+            "\nCHARACTER-BY-CHARACTER SCAN AND DFA TRANSITIONS\n");
+    fprintf(symbol_table,
+            "ACCEPT rows show the final accepting state and token category.\n"
+            "REJECT rows show lexemes that reached no accepting token state.\n");
+    if (!copy_stream(scan_log, symbol_table)) {
+        fprintf(stderr, "Error writing DFA trace to '%s'.\n",
+                SYMBOL_TABLE_FILE);
+        fclose(scan_log);
+        fclose(token_table);
+        fclose(symbol_table);
+        return EXIT_FAILURE;
+    }
+    if (fclose(scan_log) != 0) {
+        fprintf(stderr, "Error closing temporary DFA trace.\n");
         fclose(token_table);
         fclose(symbol_table);
         return EXIT_FAILURE;
