@@ -9,8 +9,12 @@ starting at state q0, to recognize lexemes and produce tokens.
 CLONING THE REPOSITORY
 ----------------------
 
-Install Git for Windows from https://git-scm.com/download/win, then open a
-terminal in the folder where you want the project and run:
+Install Git for your operating system, then open a terminal in the folder
+where you want the project and run:
+
+Windows: https://git-scm.com/download/win
+macOS: Git is included with Apple's Command Line Tools; install them with
+       xcode-select --install
 
     git clone https://github.com/Garmoe/Lexical-Analyzer.git
     cd Lexical-Analyzer
@@ -43,6 +47,18 @@ To install GCC on Windows:
 If MSYS2 was installed in a different folder, use that installation's
 UCRT64\bin folder in PATH instead.
 
+To install the C compiler on macOS:
+
+1. Open Terminal.
+2. Install Apple's Command Line Tools, which provide Clang, Git, and the
+   standard C development tools:
+
+       xcode-select --install
+
+3. Follow the installer prompts, then confirm the compiler is available:
+
+       clang --version
+
 
 BUILDING AND RUNNING
 --------------------
@@ -64,6 +80,22 @@ To run the error-handling example:
 To run the invalid-token demonstration:
 
     .\lexer.exe .\program_invalid.rice
+
+On macOS, compile with Clang from Terminal in this folder:
+
+    clang -std=c11 -Wall -Wextra -pedantic lexer.c -o lexer
+
+Run the sample program:
+
+    ./lexer ./program.rice
+
+Run the error-handling example:
+
+    ./lexer ./program_error_handling.rice
+
+Run the invalid-token demonstration:
+
+    ./lexer ./program_invalid.rice
 
 The input file must have the .rice extension and contain supported
 printable ASCII text. The lexer creates or replaces "Symbol Table"
