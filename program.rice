@@ -80,6 +80,3 @@ ULIT (natitirang_order > 0) {
 
 ULAM:bawas("Adobo", bilang_order).
 RESIBO:linisin().
-
-@ Receipt/export markers supported by the lexer.
-; # $
