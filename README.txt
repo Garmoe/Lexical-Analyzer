@@ -221,8 +221,8 @@ Lexeme       Token
 }            TOKEN_RBRACE
 
 The colon (:) is recognized as TOKEN_ACCESSOR.
-The punctuation symbols ., , and ; are recognized as tokens.
-The symbols # and $ are recognized as TOKEN_SPECIAL_SYMBOL.
+The punctuation symbols . and , are recognized as tokens (TOKEN_TERMINATOR and TOKEN_SEPARATOR).
+
 
 
 OTHER LEXICAL ELEMENTS
