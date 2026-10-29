@@ -66,7 +66,7 @@ To run the invalid-token demonstration:
     .\lexer.exe .\program_invalid.rice
 
 The input file must have the .rice extension and contain supported
-printable ASCII text. The lexer creates or replaces "Symbol Table.txt"
+printable ASCII text. The lexer creates or replaces "Symbol Table"
 in the current working directory.
 
 
@@ -86,7 +86,7 @@ reserved word followed by another token.
 SYMBOL TABLE OUTPUT
 -------------------
 
-The generated Symbol Table.txt file uses two columns:
+The generated Symbol Table plain text file uses two columns:
 
     TOKEN TYPE               | LEXEME
 
@@ -99,10 +99,10 @@ in the symbol-table file.
 LEXEME AND TOKEN TABLES
 -----------------------
 
-The counts below match the definitions in lexer.c: 10 keywords, 20 reserved
-words, 10 noise words, 17 operation symbols, and 4 delimiters/brackets.
+The counts below match the definitions in lexer.c: 11 keywords, 31 reserved
+words, 11 noise words, 17 operation symbols, and 4 delimiters/brackets.
 
-KEYWORDS (10)
+KEYWORDS (11)
 Lexeme       Token
 ------------ ----------------------
 LETRA        TOKEN_KW_LETRA
@@ -115,8 +115,9 @@ KUNDI        TOKEN_KW_KUNDI
 ULIT         TOKEN_KW_ULIT
 HINTO        TOKEN_KW_HINTO
 TULOY        TOKEN_KW_TULOY
+WALA         TOKEN_KW_WALA
 
-RESERVED WORDS (20)
+RESERVED WORDS (11 KEYWORDS + 20 = 31)
 Lexeme       Token
 ------------ ----------------------
 TAMA         TOKEN_RES_TAMA
@@ -127,7 +128,7 @@ RESIBO       TOKEN_RES_RESIBO
 ilagay       TOKEN_RES_ilagay
 meron        TOKEN_RES_meron
 kumuha       TOKEN_RES_kumuha
-dagdag        TOKEN_RES_dagdag
+dagdag       TOKEN_RES_dagdag
 bawas        TOKEN_RES_bawas
 kalkula      TOKEN_RES_kalkula
 diskwento    TOKEN_RES_diskwento
@@ -140,7 +141,7 @@ LUTO         TOKEN_RES_LUTO
 HAIN         TOKEN_RES_HAIN
 BAYAD        TOKEN_RES_BAYAD
 
-NOISE WORDS (10)
+NOISE WORDS (11)
 Lexeme       Token
 ------------ ----------------------
 po           TOKEN_NOISE_WORD
@@ -149,6 +150,7 @@ lang         TOKEN_NOISE_WORD
 at           TOKEN_NOISE_WORD
 nang         TOKEN_NOISE_WORD
 ng           TOKEN_NOISE_WORD
+ngani        TOKEN_NOISE_WORD
 ang          TOKEN_NOISE_WORD
 ay           TOKEN_NOISE_WORD
 nito         TOKEN_NOISE_WORD
@@ -192,7 +194,7 @@ OTHER LEXICAL ELEMENTS
 ----------------------
 
 Identifiers:
-    Start with an ASCII letter or underscore; subsequent characters may
+    Start with an ASCII letter; subsequent characters may
     also include digits.
 
 Numeric literals:
