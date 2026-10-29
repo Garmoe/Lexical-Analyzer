@@ -8,7 +8,7 @@ ULAM:ilagay("Kanin", 15.00).
 NUMERO bayad_pera = 500.00.
 NUMERO bilang_order = 2.
 NUMERO subtotal = 120.00 * bilang_order + 15.00 * bilang_order.
-LETRA station = "A".
+LETRA station = 'A'.
 SALITA customer = "Maya".
 BUO sukli_barya = 0.
 KUNDISYON may_sapat_na_stock = TAMA.

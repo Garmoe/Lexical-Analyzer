@@ -26,6 +26,7 @@ enum {
     STATE_STRING = 903,
     STATE_COMMENT = 904,
     STATE_ERROR = 905,
+    STATE_CHAR = 906,
     STATE_ASSIGN = 910,
     STATE_NOT = 911,
     STATE_GREATER = 912,
@@ -136,6 +137,15 @@ static const WordDefinition symbols[] = {
     {"||", "TOKEN_LOGIC_OR", "LOGICAL_OPERATOR", 0}
 };
 
+static int is_filipino_letter(const unsigned char *s, size_t pos, size_t length)
+{
+    if (pos + 1 < length && s[pos] == 0xC3 &&
+        (s[pos + 1] == 0xB1 || s[pos + 1] == 0x91)) {
+        return 1;
+    }
+    return 0;
+}
+
 static int is_identifier_start(int c)
 {
     return isalpha((unsigned char)c);
@@ -144,6 +154,22 @@ static int is_identifier_start(int c)
 static int is_identifier_part(int c)
 {
     return isalnum((unsigned char)c) || c == '_';
+}
+
+static int is_id_start(const char *source, size_t pos, size_t length)
+{
+    if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+        return 1;
+    }
+    return is_identifier_start((unsigned char)source[pos]);
+}
+
+static int is_id_part(const char *source, size_t pos, size_t length)
+{
+    if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+        return 1;
+    }
+    return is_identifier_part((unsigned char)source[pos]);
 }
 
 static int is_whitespace(int c)
@@ -271,10 +297,13 @@ static int initialize_automaton(void)
         !add_transition(STATE_START, CLASS_WHITESPACE, STATE_START) ||
         !add_transition(STATE_START, CLASS_ANY, STATE_ERROR) ||
         !add_transition(STATE_START, '"', STATE_STRING) ||
+        !add_transition(STATE_START, '\'', STATE_CHAR) ||
         !add_transition(STATE_START, '@', STATE_COMMENT) ||
         !add_transition(STATE_COMMENT, CLASS_ANY, STATE_COMMENT) ||
         !add_transition(STATE_STRING, '"', STATE_START) ||
-        !add_transition(STATE_STRING, CLASS_ANY, STATE_STRING)) {
+        !add_transition(STATE_STRING, CLASS_ANY, STATE_STRING) ||
+        !add_transition(STATE_CHAR, '\'', STATE_START) ||
+        !add_transition(STATE_CHAR, CLASS_ANY, STATE_CHAR)) {
         return 0;
     }
 
@@ -291,7 +320,9 @@ static int initialize_automaton(void)
            add_accept(STATE_INTEGER, "TOKEN_BUO_LITERAL", "INTEGER_LITERAL",
                       0) &&
            add_accept(STATE_DECIMAL, "TOKEN_NUMERO_LITERAL",
-                      "DECIMAL_LITERAL", 0);
+                      "DECIMAL_LITERAL", 0) &&
+           add_accept(STATE_CHAR, "TOKEN_LETRA_LITERAL", "CHARACTER_LITERAL",
+                      0);
 }
 
 static int dfa_step(int state, int c)
@@ -309,6 +340,9 @@ static int dfa_step(int state, int c)
     if (state == STATE_STRING) {
         return find_transition(state, CLASS_ANY);
     }
+    if (state == STATE_CHAR) {
+        return find_transition(state, CLASS_ANY);
+    }
     if (isalpha((unsigned char)c)) {
         input_class = CLASS_ALPHA;
     } else if (isdigit((unsigned char)c)) {
@@ -322,6 +356,28 @@ static int dfa_step(int state, int c)
     }
     transition = find_transition(state, input_class);
     return transition;
+}
+
+static void write_trace_str(FILE *out, const char *kind, size_t line,
+                            size_t column, const char *display,
+                            const char *classification)
+{
+    if (out == NULL) {
+        return;
+    }
+    fprintf(out, "%s | Line %zu, Column %zu | Character: [%s]"
+                 " | Class: %s\n",
+            kind, line, column, display, classification);
+}
+
+static void write_transition_str(FILE *out, size_t line, size_t column,
+                                 int from, const char *display, int to)
+{
+    if (out == NULL) {
+        return;
+    }
+    fprintf(out, "DFA | Line %zu, Column %zu | q%d --[%s]--> q%d\n",
+            line, column, from, display, to);
 }
 
 static void write_trace(FILE *out, const char *kind, size_t line,
@@ -475,6 +531,34 @@ static int read_source(const char *path, char **source, size_t *length)
         return 0;
     }
     while ((c = fgetc(file)) != EOF) {
+        if ((unsigned char)c == 0xC3) {
+            int c2 = fgetc(file);
+            if (c2 == 0xB1 || c2 == 0x91) {
+                if (!append_char(source, length, &capacity, c) ||
+                    !append_char(source, length, &capacity, c2)) {
+                    fprintf(stderr, "Not enough memory while reading input.\n");
+                    fclose(file);
+                    free(*source);
+                    *source = NULL;
+                    *length = 0;
+                    return 0;
+                }
+                ++column;
+                continue;
+            } else {
+                if (c2 != EOF) {
+                    ungetc(c2, file);
+                }
+                fprintf(stderr,
+                        "Input contains unsupported character at line %zu, "
+                        "column %zu.\n", line, column);
+                fclose(file);
+                free(*source);
+                *source = NULL;
+                *length = 0;
+                return 0;
+            }
+        }
         if (c == '\0' || (c < 32 && c != '\t' && c != '\r' && c != '\n') ||
             c > 126) {
             fprintf(stderr,
@@ -548,15 +632,25 @@ static int scan_source(const char *source, size_t length, FILE *log,
             size_t comment_length;
             int state = STATE_START;
             while (pos < length && source[pos] != '\n') {
-                int current = (unsigned char)source[pos];
-                int next = dfa_step(state, current);
-                write_trace(log, "SCAN", line, column, current,
-                            state == STATE_START ? "COMMENT_MARKER" :
-                                                   "COMMENT");
-                write_transition(log, line, column, state, current, next);
-                state = next;
-                ++pos;
-                ++column;
+                if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+                    char letter_buf[3] = {source[pos], source[pos + 1], '\0'};
+                    int next = dfa_step(state, CLASS_ANY);
+                    write_trace_str(log, "SCAN", line, column, letter_buf, "COMMENT");
+                    write_transition_str(log, line, column, state, letter_buf, next);
+                    state = next;
+                    pos += 2;
+                    column += 1;
+                } else {
+                    int current = (unsigned char)source[pos];
+                    int next = dfa_step(state, current);
+                    write_trace(log, "SCAN", line, column, current,
+                                state == STATE_START ? "COMMENT_MARKER" :
+                                                       "COMMENT");
+                    write_transition(log, line, column, state, current, next);
+                    state = next;
+                    ++pos;
+                    ++column;
+                }
             }
             comment_length = pos - comment_start;
             if (comment_length > 0 &&
@@ -573,9 +667,12 @@ static int scan_source(const char *source, size_t length, FILE *log,
         if (c == '_') {
             write_trace(log, "SCAN", line, column, c, "UNDERSCORE");
             write_transition(log, line, column, STATE_START, c, STATE_ERROR);
-            while (pos < length &&
-                   is_identifier_part((unsigned char)source[pos])) {
-                ++pos;
+            while (pos < length && is_id_part(source, pos, length)) {
+                if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+                    pos += 2;
+                } else {
+                    pos += 1;
+                }
                 ++column;
             }
             report_error(tokens, token_line, token_column,
@@ -584,31 +681,40 @@ static int scan_source(const char *source, size_t length, FILE *log,
             continue;
         }
 
-        if (is_identifier_start(c)) {
+        if (is_id_start(source, pos, length)) {
             size_t start = pos;
             int state = STATE_START;
-            while (pos < length &&
-                   is_identifier_part((unsigned char)source[pos])) {
-                int current = (unsigned char)source[pos];
-                int next = dfa_step(state, current);
-                if (next < 0) {
-                    next = STATE_IDENTIFIER;
+            while (pos < length && is_id_part(source, pos, length)) {
+                if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+                    int next = STATE_IDENTIFIER;
+                    char letter_buf[3] = {source[pos], source[pos + 1], '\0'};
+                    write_trace_str(log, "SCAN", line, column, letter_buf, "LETTER");
+                    write_transition_str(log, line, column, state, letter_buf, next);
+                    state = next;
+                    pos += 2;
+                    column += 1;
+                } else {
+                    int current = (unsigned char)source[pos];
+                    int next = dfa_step(state, current);
+                    if (next < 0) {
+                        next = STATE_IDENTIFIER;
+                    }
+                    write_trace(log, "SCAN", line, column, current,
+                                isdigit((unsigned char)current) ? "DIGIT" :
+                                current == '_' ? "UNDERSCORE" : "LETTER");
+                    write_transition(log, line, column, state, current, next);
+                    state = next;
+                    pos += 1;
+                    column += 1;
                 }
-                write_trace(log, "SCAN", line, column, current,
-                            isdigit((unsigned char)current) ? "DIGIT" :
-                            current == '_' ? "UNDERSCORE" : "LETTER");
-                write_transition(log, line, column, state, current, next);
-                state = next;
-                ++pos;
-                ++column;
             }
             {
                 const AcceptingState *accepted = find_accept(state);
-                char lexeme[MAX_TOKEN_LENGTH];
                 size_t token_length = pos - start;
-                if (token_length >= sizeof lexeme) {
+                char *lexeme = malloc(token_length + 1);
+                if (lexeme == NULL) {
                     report_error(tokens, token_line, token_column,
-                                 "Identifier exceeds maximum supported length.");
+                                 "Out of memory allocating identifier token.");
                     ++errors;
                     continue;
                 }
@@ -618,15 +724,12 @@ static int scan_source(const char *source, size_t length, FILE *log,
                     write_symbol(tokens, "TOKEN_IDENTIFIER", lexeme);
                     write_acceptance(log, lexeme, "TOKEN_IDENTIFIER",
                                      "IDENTIFIER", state);
-                } else if (accepted->ignored) {
-                    write_symbol(tokens, accepted->token_type, lexeme);
-                    write_acceptance(log, lexeme, accepted->token_type,
-                                     accepted->classification, state);
                 } else {
                     write_symbol(tokens, accepted->token_type, lexeme);
                     write_acceptance(log, lexeme, accepted->token_type,
                                      accepted->classification, state);
                 }
+                free(lexeme);
             }
             continue;
         }
@@ -667,12 +770,18 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 }
             }
             {
-                char lexeme[MAX_TOKEN_LENGTH];
                 size_t token_length = pos - start;
                 const AcceptingState *accepted = find_accept(state);
-                if (token_length >= sizeof lexeme || accepted == NULL) {
+                if (accepted == NULL) {
                     report_error(tokens, token_line, token_column,
-                                 "Invalid or oversized numeric literal.");
+                                 "Invalid numeric literal.");
+                    ++errors;
+                    continue;
+                }
+                char *lexeme = malloc(token_length + 1);
+                if (lexeme == NULL) {
+                    report_error(tokens, token_line, token_column,
+                                 "Out of memory allocating numeric literal.");
                     ++errors;
                     continue;
                 }
@@ -681,6 +790,88 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 write_symbol(tokens, accepted->token_type, lexeme);
                 write_acceptance(log, lexeme, accepted->token_type,
                                  accepted->classification, state);
+                free(lexeme);
+            }
+            continue;
+        }
+
+        if (c == '\'') {
+            size_t start = pos;
+            int state = STATE_START;
+            int next = STATE_CHAR;
+            write_trace(log, "SCAN", line, column, c, "CHAR_DELIMITER");
+            write_transition(log, line, column, state, c, next);
+            state = next;
+            ++pos;
+            ++column;
+
+            if (pos >= length || source[pos] == '\n' || source[pos] == '\r') {
+                report_error(tokens, token_line, token_column,
+                             "Unterminated character literal.");
+                ++errors;
+                continue;
+            }
+
+            if (source[pos] == '\'') {
+                write_trace(log, "SCAN", line, column, '\'', "CHAR_DELIMITER");
+                write_transition(log, line, column, state, '\'', STATE_ERROR);
+                report_error(tokens, token_line, token_column,
+                             "Empty character literal is not allowed.");
+                ++errors;
+                ++pos;
+                ++column;
+                continue;
+            }
+
+            if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+                char letter_buf[3] = {source[pos], source[pos + 1], '\0'};
+                write_trace_str(log, "SCAN", line, column, letter_buf, "CHAR_CONTENT");
+                write_transition_str(log, line, column, state, letter_buf, state);
+                pos += 2;
+                column += 1;
+            } else {
+                int ch = (unsigned char)source[pos];
+                write_trace(log, "SCAN", line, column, ch, "CHAR_CONTENT");
+                write_transition(log, line, column, state, ch, state);
+                pos += 1;
+                column += 1;
+            }
+
+            if (pos < length && source[pos] == '\'') {
+                write_trace(log, "SCAN", line, column, '\'', "CHAR_DELIMITER");
+                write_transition(log, line, column, state, '\'', STATE_START);
+                ++pos;
+                ++column;
+
+                size_t token_length = pos - start;
+                char *lexeme = malloc(token_length + 1);
+                if (lexeme == NULL) {
+                    report_error(tokens, token_line, token_column,
+                                 "Out of memory allocating character literal.");
+                    ++errors;
+                    continue;
+                }
+                memcpy(lexeme, source + start, token_length);
+                lexeme[token_length] = '\0';
+                write_symbol(tokens, "TOKEN_LETRA_LITERAL", lexeme);
+                write_acceptance(log, lexeme, "TOKEN_LETRA_LITERAL",
+                                 "CHARACTER_LITERAL", state);
+                free(lexeme);
+            } else {
+                while (pos < length && source[pos] != '\'' && source[pos] != '\n') {
+                    ++pos;
+                    ++column;
+                }
+                if (pos < length && source[pos] == '\'') {
+                    ++pos;
+                    ++column;
+                    report_error(tokens, token_line, token_column,
+                                 "Character literal may only contain a single character.");
+                } else {
+                    report_error(tokens, token_line, token_column,
+                                 "Unterminated character literal.");
+                }
+                ++errors;
             }
             continue;
         }
@@ -694,18 +885,26 @@ static int scan_source(const char *source, size_t length, FILE *log,
             ++pos;
             ++column;
             while (pos < length && source[pos] != '\n') {
-                int current = (unsigned char)source[pos];
-                int next = dfa_step(state, current);
-                write_trace(log, "SCAN", line, column, current,
-                            current == '"' ? "STRING_DELIMITER" :
-                                             "STRING_CHARACTER");
-                write_transition(log, line, column, state, current, next);
-                state = next;
-                ++pos;
-                ++column;
-                if (current == '"') {
-                    terminated = 1;
-                    break;
+                if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+                    char letter_buf[3] = {source[pos], source[pos + 1], '\0'};
+                    write_trace_str(log, "SCAN", line, column, letter_buf, "STRING_CHARACTER");
+                    write_transition_str(log, line, column, state, letter_buf, state);
+                    pos += 2;
+                    column += 1;
+                } else {
+                    int current = (unsigned char)source[pos];
+                    int next = dfa_step(state, current);
+                    write_trace(log, "SCAN", line, column, current,
+                                current == '"' ? "STRING_DELIMITER" :
+                                                 "STRING_CHARACTER");
+                    write_transition(log, line, column, state, current, next);
+                    state = next;
+                    ++pos;
+                    ++column;
+                    if (current == '"') {
+                        terminated = 1;
+                        break;
+                    }
                 }
             }
             if (!terminated) {
@@ -715,11 +914,11 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 continue;
             }
             {
-                char lexeme[MAX_TOKEN_LENGTH];
                 size_t token_length = pos - start;
-                if (token_length >= sizeof lexeme) {
+                char *lexeme = malloc(token_length + 1);
+                if (lexeme == NULL) {
                     report_error(tokens, token_line, token_column,
-                                 "String literal exceeds maximum supported length.");
+                                 "Out of memory allocating string literal.");
                     ++errors;
                     continue;
                 }
@@ -728,6 +927,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 write_symbol(tokens, "TOKEN_SALITA_LITERAL", lexeme);
                 write_acceptance(log, lexeme, "TOKEN_SALITA_LITERAL",
                                  "STRING_LITERAL", state);
+                free(lexeme);
             }
             continue;
         }
