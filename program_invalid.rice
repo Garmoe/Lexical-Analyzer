@@ -1,0 +1,13 @@
+@ Invalid-token demonstration. Each unsupported symbol is intentional.
+
+NUMERO valid_value = 25.
+
+@ Tilde is not a recognized JAVArice symbol.
+~
+
+@ Single ampersand and pipe are invalid; the lexer accepts && and ||.
+KUNDISYON invalid_and = TAMA & MALI.
+KUNDISYON invalid_or = TAMA | MALI.
+
+@ Valid input after the invalid tokens should still be recognized.
+NUMERO next_value = 50.

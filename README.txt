@@ -6,6 +6,44 @@ It reads the source one character at a time and uses a finite automaton,
 starting at state q0, to recognize lexemes and produce tokens.
 
 
+CLONING THE REPOSITORY
+----------------------
+
+Install Git for Windows from https://git-scm.com/download/win, then open a
+terminal in the folder where you want the project and run:
+
+    git clone https://github.com/Garmoe/Lexical-Analyzer.git
+    cd Lexical-Analyzer
+
+You can then open this folder in VS Code. If you already have the project
+files, skip this section.
+
+
+DEPENDENCIES AND INSTALLATION
+-----------------------------
+
+The project has no third-party library dependencies. It requires GCC, a
+C compiler, to build lexer.c. GCC's C standard library comes with the
+compiler toolchain.
+
+To install GCC on Windows:
+
+1. Download and install MSYS2 from https://www.msys2.org/.
+2. Open the MSYS2 UCRT64 terminal from the Start menu.
+3. Install the GCC toolchain by running:
+
+       pacman -S --needed mingw-w64-ucrt-x86_64-gcc
+
+4. Add C:\msys64\ucrt64\bin to the Windows PATH if the installer used the
+   default MSYS2 location. Restart VS Code or open a new terminal afterward.
+5. Confirm that GCC is available:
+
+       gcc --version
+
+If MSYS2 was installed in a different folder, use that installation's
+UCRT64\bin folder in PATH instead.
+
+
 BUILDING AND RUNNING
 --------------------
 
@@ -22,6 +60,10 @@ To run the lexer on the sample program:
 To run the error-handling example:
 
     .\lexer.exe .\program_error_handling.rice
+
+To run the invalid-token demonstration:
+
+    .\lexer.exe .\program_invalid.rice
 
 The input file must have the .rice extension and contain supported
 printable ASCII text. The lexer creates or replaces "Symbol Table.txt"
