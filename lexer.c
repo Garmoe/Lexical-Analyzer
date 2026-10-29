@@ -8,7 +8,7 @@
 #define MAX_TRANSITIONS 1024
 #define MAX_ACCEPTS 128
 #define MAX_TOKEN_LENGTH 4096
-#define SYMBOL_TABLE_FILE "Symbol Table.txt"
+#define SYMBOL_TABLE_FILE "Symbol Table"
 
 enum {
     CLASS_ALPHA = 256,
@@ -72,6 +72,7 @@ static const WordDefinition words[] = {
     {"ULIT", "TOKEN_KW_ULIT", "KEYWORD", 0},
     {"HINTO", "TOKEN_KW_HINTO", "KEYWORD", 0},
     {"TULOY", "TOKEN_KW_TULOY", "KEYWORD", 0},
+    {"WALA", "TOKEN_KW_WALA", "KEYWORD", 0},
     {"TAMA", "TOKEN_RES_TAMA", "RESERVED_WORD", 0},
     {"MALI", "TOKEN_RES_MALI", "RESERVED_WORD", 0},
     {"KATUMBAS", "TOKEN_RES_KATUMBAS", "RESERVED_WORD", 0},
@@ -101,7 +102,8 @@ static const WordDefinition words[] = {
     {"ang", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
     {"ay", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
     {"nito", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"opo", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1}
+    {"opo", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
+    {"ngani", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1}
 };
 
 static const WordDefinition symbols[] = {
@@ -136,7 +138,7 @@ static const WordDefinition symbols[] = {
 
 static int is_identifier_start(int c)
 {
-    return isalpha((unsigned char)c) || c == '_';
+    return isalpha((unsigned char)c);
 }
 
 static int is_identifier_part(int c)
@@ -258,7 +260,6 @@ static int initialize_automaton(void)
     }
 
     if (!add_transition(STATE_START, CLASS_ALPHA, STATE_IDENTIFIER) ||
-        !add_transition(STATE_START, CLASS_UNDERSCORE, STATE_IDENTIFIER) ||
         !add_transition(STATE_IDENTIFIER, CLASS_ALPHA, STATE_IDENTIFIER) ||
         !add_transition(STATE_IDENTIFIER, CLASS_DIGIT, STATE_IDENTIFIER) ||
         !add_transition(STATE_IDENTIFIER, CLASS_UNDERSCORE,
@@ -529,6 +530,20 @@ static int scan_source(const char *source, size_t length, FILE *log,
             }
             write_symbol_span(tokens, "LINE_COMMENT",
                               source + comment_start, pos - comment_start);
+            continue;
+        }
+
+        if (c == '_') {
+            write_trace(log, "SCAN", line, column, c, "UNDERSCORE");
+            write_transition(log, line, column, STATE_START, c, STATE_ERROR);
+            while (pos < length &&
+                   is_identifier_part((unsigned char)source[pos])) {
+                ++pos;
+                ++column;
+            }
+            report_error(tokens, token_line, token_column,
+                         "Identifier must not begin with an underscore.");
+            ++errors;
             continue;
         }
 
