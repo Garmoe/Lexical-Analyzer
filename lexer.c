@@ -390,15 +390,27 @@ static void write_symbol(FILE *out, const char *type, const char *lexeme)
     write_symbol_span(out, type, lexeme, strlen(lexeme));
 }
 
+static void write_acceptance_span(FILE *out, const char *lexeme,
+                                  size_t length, const char *token_type,
+                                  const char *classification, int state)
+{
+    if (out != NULL) {
+        size_t i;
+        fprintf(out, "ACCEPT | [");
+        for (i = 0; i < length; ++i) {
+            fputc(lexeme[i], out);
+        }
+        fprintf(out, "] | State: q%d | Token: %s | Class: %s\n",
+                state, token_type, classification);
+    }
+}
+
 static void write_acceptance(FILE *out, const char *lexeme,
                              const char *token_type,
                              const char *classification, int state)
 {
-    if (out != NULL) {
-        fprintf(out,
-                "ACCEPT | [%s] | State: q%d | Token: %s | Class: %s\n",
-                lexeme, state, token_type, classification);
-    }
+    write_acceptance_span(out, lexeme, strlen(lexeme), token_type,
+                          classification, state);
 }
 
 static void report_error(FILE *out, size_t line, size_t column,
@@ -553,8 +565,8 @@ static int scan_source(const char *source, size_t length, FILE *log,
             }
             write_symbol_span(tokens, "LINE_COMMENT",
                               source + comment_start, comment_length);
-            write_acceptance(log, source + comment_start, "LINE_COMMENT",
-                             "COMMENT", state);
+            write_acceptance_span(log, source + comment_start, comment_length,
+                                  "LINE_COMMENT", "COMMENT", state);
             continue;
         }
 

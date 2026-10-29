@@ -441,92 +441,7 @@ SCAN | Line 1, Column 35 | Character: [m] | Class: COMMENT
 DFA | Line 1, Column 35 | q904 --[m]--> q904
 SCAN | Line 1, Column 36 | Character: [\r] | Class: COMMENT
 DFA | Line 1, Column 36 | q904 --[\r]--> q904
-ACCEPT | [@ JAVArice canteen checkout program
-
-@ Prepare the menu and initialize the register.
-ULAM:ilagay("Adobo", 120.00).
-ULAM:ilagay("Sinigang", 150.00).
-ULAM:ilagay("Kanin", 15.00).
-
-NUMERO bayad_pera = 500.00.
-NUMERO bilang_order = 2.
-NUMERO subtotal = 120.00 * bilang_order + 15.00 * bilang_order.
-LETRA station = "A".
-SALITA customer = "Maya".
-BUO sukli_barya = 0.
-KUNDISYON may_sapat_na_stock = TAMA.
-
-@ Take the customer's order and check the available stock.
-ORDER po na lang {
-    RESIBO:dagdag("Adobo", bilang_order).
-    RESIBO:dagdag("Kanin", bilang_order).
-
-    KUNG ULAM:meron("Adobo") == TAMA && may_sapat_na_stock {
-        ULAM:kumuha("Adobo").
-        ULAM:kumuha("Kanin").
-    } KUNDI {
-        MALI.
-        HINTO.
-    }
-}
-
-@ Prepare the meal and calculate its cost.
-LUTO na {
-    RESIBO:kalkula().
-    NUMERO buwis = subtotal / 10.
-    NUMERO kabuuan = subtotal + buwis.
-    NUMERO bawas_presyo = RESIBO:diskwento(kabuuan, 10).
-    NUMERO presyo_bawat_order = RESIBO:hatian(bawas_presyo, bilang_order).
-    NUMERO tira = kabuuan % 10.
-    NUMERO tantiya = kabuuan ^ 1 \ 1.
-
-    KUNG kabuuan KATUMBAS 297.00 && subtotal > 0 &&
-         subtotal < kabuuan && subtotal <= kabuuan &&
-         presyo_bawat_order >= 0 {
-        RESIBO:ilimbag().
-    }
-}
-
-@ Serve the order and accept payment.
-HAIN po {
-    RESIBO:ilimbag() at nang ng ang ay nito opo.
-}
-
-BAYAD lang {
-    KUNDISYON sapat_ang_bayad = bayad_pera >= kabuuan &&
-                                 bayad_pera > subtotal.
-
-    KUNG sapat_ang_bayad == TAMA && bayad_pera != 0 {
-        NUMERO sukli = RESIBO:bayaran(bayad_pera).
-        sukli_barya = sukli.
-
-        KUNG ! (sapat_ang_bayad == MALI) &&
-             (sukli >= 0 || bayad_pera == kabuuan) {
-            RESIBO:ilimbag().
-        }
-    } KUNDI {
-        RESIBO:ilimbag().
-    }
-}
-
-@ Close the register after all orders are complete.
-NUMERO natitirang_order = bilang_order.
-ULIT (natitirang_order > 0) {
-    natitirang_order = natitirang_order - 1.
-
-    KUNG natitirang_order > 0 {
-        TULOY.
-    } KUNDI {
-        HINTO.
-    }
-}
-
-ULAM:bawas("Adobo", bilang_order).
-RESIBO:linisin().
-
-@ Receipt/export markers supported by the lexer.
-; # $
-] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
+ACCEPT | [@ JAVArice canteen checkout program] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
 SCAN | Line 1, Column 37 | Character: [\n] | Class: WHITESPACE
 DFA | Line 1, Column 37 | q0 --[\n]--> q0
 SCAN | Line 2, Column 1 | Character: [\r] | Class: WHITESPACE
@@ -629,90 +544,7 @@ SCAN | Line 3, Column 47 | Character: [.] | Class: COMMENT
 DFA | Line 3, Column 47 | q904 --[.]--> q904
 SCAN | Line 3, Column 48 | Character: [\r] | Class: COMMENT
 DFA | Line 3, Column 48 | q904 --[\r]--> q904
-ACCEPT | [@ Prepare the menu and initialize the register.
-ULAM:ilagay("Adobo", 120.00).
-ULAM:ilagay("Sinigang", 150.00).
-ULAM:ilagay("Kanin", 15.00).
-
-NUMERO bayad_pera = 500.00.
-NUMERO bilang_order = 2.
-NUMERO subtotal = 120.00 * bilang_order + 15.00 * bilang_order.
-LETRA station = "A".
-SALITA customer = "Maya".
-BUO sukli_barya = 0.
-KUNDISYON may_sapat_na_stock = TAMA.
-
-@ Take the customer's order and check the available stock.
-ORDER po na lang {
-    RESIBO:dagdag("Adobo", bilang_order).
-    RESIBO:dagdag("Kanin", bilang_order).
-
-    KUNG ULAM:meron("Adobo") == TAMA && may_sapat_na_stock {
-        ULAM:kumuha("Adobo").
-        ULAM:kumuha("Kanin").
-    } KUNDI {
-        MALI.
-        HINTO.
-    }
-}
-
-@ Prepare the meal and calculate its cost.
-LUTO na {
-    RESIBO:kalkula().
-    NUMERO buwis = subtotal / 10.
-    NUMERO kabuuan = subtotal + buwis.
-    NUMERO bawas_presyo = RESIBO:diskwento(kabuuan, 10).
-    NUMERO presyo_bawat_order = RESIBO:hatian(bawas_presyo, bilang_order).
-    NUMERO tira = kabuuan % 10.
-    NUMERO tantiya = kabuuan ^ 1 \ 1.
-
-    KUNG kabuuan KATUMBAS 297.00 && subtotal > 0 &&
-         subtotal < kabuuan && subtotal <= kabuuan &&
-         presyo_bawat_order >= 0 {
-        RESIBO:ilimbag().
-    }
-}
-
-@ Serve the order and accept payment.
-HAIN po {
-    RESIBO:ilimbag() at nang ng ang ay nito opo.
-}
-
-BAYAD lang {
-    KUNDISYON sapat_ang_bayad = bayad_pera >= kabuuan &&
-                                 bayad_pera > subtotal.
-
-    KUNG sapat_ang_bayad == TAMA && bayad_pera != 0 {
-        NUMERO sukli = RESIBO:bayaran(bayad_pera).
-        sukli_barya = sukli.
-
-        KUNG ! (sapat_ang_bayad == MALI) &&
-             (sukli >= 0 || bayad_pera == kabuuan) {
-            RESIBO:ilimbag().
-        }
-    } KUNDI {
-        RESIBO:ilimbag().
-    }
-}
-
-@ Close the register after all orders are complete.
-NUMERO natitirang_order = bilang_order.
-ULIT (natitirang_order > 0) {
-    natitirang_order = natitirang_order - 1.
-
-    KUNG natitirang_order > 0 {
-        TULOY.
-    } KUNDI {
-        HINTO.
-    }
-}
-
-ULAM:bawas("Adobo", bilang_order).
-RESIBO:linisin().
-
-@ Receipt/export markers supported by the lexer.
-; # $
-] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
+ACCEPT | [@ Prepare the menu and initialize the register.] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
 SCAN | Line 3, Column 49 | Character: [\n] | Class: WHITESPACE
 DFA | Line 3, Column 49 | q0 --[\n]--> q0
 SCAN | Line 4, Column 1 | Character: [U] | Class: LETTER
@@ -1557,77 +1389,7 @@ SCAN | Line 16, Column 58 | Character: [.] | Class: COMMENT
 DFA | Line 16, Column 58 | q904 --[.]--> q904
 SCAN | Line 16, Column 59 | Character: [\r] | Class: COMMENT
 DFA | Line 16, Column 59 | q904 --[\r]--> q904
-ACCEPT | [@ Take the customer's order and check the available stock.
-ORDER po na lang {
-    RESIBO:dagdag("Adobo", bilang_order).
-    RESIBO:dagdag("Kanin", bilang_order).
-
-    KUNG ULAM:meron("Adobo") == TAMA && may_sapat_na_stock {
-        ULAM:kumuha("Adobo").
-        ULAM:kumuha("Kanin").
-    } KUNDI {
-        MALI.
-        HINTO.
-    }
-}
-
-@ Prepare the meal and calculate its cost.
-LUTO na {
-    RESIBO:kalkula().
-    NUMERO buwis = subtotal / 10.
-    NUMERO kabuuan = subtotal + buwis.
-    NUMERO bawas_presyo = RESIBO:diskwento(kabuuan, 10).
-    NUMERO presyo_bawat_order = RESIBO:hatian(bawas_presyo, bilang_order).
-    NUMERO tira = kabuuan % 10.
-    NUMERO tantiya = kabuuan ^ 1 \ 1.
-
-    KUNG kabuuan KATUMBAS 297.00 && subtotal > 0 &&
-         subtotal < kabuuan && subtotal <= kabuuan &&
-         presyo_bawat_order >= 0 {
-        RESIBO:ilimbag().
-    }
-}
-
-@ Serve the order and accept payment.
-HAIN po {
-    RESIBO:ilimbag() at nang ng ang ay nito opo.
-}
-
-BAYAD lang {
-    KUNDISYON sapat_ang_bayad = bayad_pera >= kabuuan &&
-                                 bayad_pera > subtotal.
-
-    KUNG sapat_ang_bayad == TAMA && bayad_pera != 0 {
-        NUMERO sukli = RESIBO:bayaran(bayad_pera).
-        sukli_barya = sukli.
-
-        KUNG ! (sapat_ang_bayad == MALI) &&
-             (sukli >= 0 || bayad_pera == kabuuan) {
-            RESIBO:ilimbag().
-        }
-    } KUNDI {
-        RESIBO:ilimbag().
-    }
-}
-
-@ Close the register after all orders are complete.
-NUMERO natitirang_order = bilang_order.
-ULIT (natitirang_order > 0) {
-    natitirang_order = natitirang_order - 1.
-
-    KUNG natitirang_order > 0 {
-        TULOY.
-    } KUNDI {
-        HINTO.
-    }
-}
-
-ULAM:bawas("Adobo", bilang_order).
-RESIBO:linisin().
-
-@ Receipt/export markers supported by the lexer.
-; # $
-] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
+ACCEPT | [@ Take the customer's order and check the available stock.] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
 SCAN | Line 16, Column 60 | Character: [\n] | Class: WHITESPACE
 DFA | Line 16, Column 60 | q0 --[\n]--> q0
 SCAN | Line 17, Column 1 | Character: [O] | Class: LETTER
@@ -2354,63 +2116,7 @@ SCAN | Line 30, Column 42 | Character: [.] | Class: COMMENT
 DFA | Line 30, Column 42 | q904 --[.]--> q904
 SCAN | Line 30, Column 43 | Character: [\r] | Class: COMMENT
 DFA | Line 30, Column 43 | q904 --[\r]--> q904
-ACCEPT | [@ Prepare the meal and calculate its cost.
-LUTO na {
-    RESIBO:kalkula().
-    NUMERO buwis = subtotal / 10.
-    NUMERO kabuuan = subtotal + buwis.
-    NUMERO bawas_presyo = RESIBO:diskwento(kabuuan, 10).
-    NUMERO presyo_bawat_order = RESIBO:hatian(bawas_presyo, bilang_order).
-    NUMERO tira = kabuuan % 10.
-    NUMERO tantiya = kabuuan ^ 1 \ 1.
-
-    KUNG kabuuan KATUMBAS 297.00 && subtotal > 0 &&
-         subtotal < kabuuan && subtotal <= kabuuan &&
-         presyo_bawat_order >= 0 {
-        RESIBO:ilimbag().
-    }
-}
-
-@ Serve the order and accept payment.
-HAIN po {
-    RESIBO:ilimbag() at nang ng ang ay nito opo.
-}
-
-BAYAD lang {
-    KUNDISYON sapat_ang_bayad = bayad_pera >= kabuuan &&
-                                 bayad_pera > subtotal.
-
-    KUNG sapat_ang_bayad == TAMA && bayad_pera != 0 {
-        NUMERO sukli = RESIBO:bayaran(bayad_pera).
-        sukli_barya = sukli.
-
-        KUNG ! (sapat_ang_bayad == MALI) &&
-             (sukli >= 0 || bayad_pera == kabuuan) {
-            RESIBO:ilimbag().
-        }
-    } KUNDI {
-        RESIBO:ilimbag().
-    }
-}
-
-@ Close the register after all orders are complete.
-NUMERO natitirang_order = bilang_order.
-ULIT (natitirang_order > 0) {
-    natitirang_order = natitirang_order - 1.
-
-    KUNG natitirang_order > 0 {
-        TULOY.
-    } KUNDI {
-        HINTO.
-    }
-}
-
-ULAM:bawas("Adobo", bilang_order).
-RESIBO:linisin().
-
-@ Receipt/export markers supported by the lexer.
-; # $
-] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
+ACCEPT | [@ Prepare the meal and calculate its cost.] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
 SCAN | Line 30, Column 44 | Character: [\n] | Class: WHITESPACE
 DFA | Line 30, Column 44 | q0 --[\n]--> q0
 SCAN | Line 31, Column 1 | Character: [L] | Class: LETTER
@@ -3581,46 +3287,7 @@ SCAN | Line 47, Column 37 | Character: [.] | Class: COMMENT
 DFA | Line 47, Column 37 | q904 --[.]--> q904
 SCAN | Line 47, Column 38 | Character: [\r] | Class: COMMENT
 DFA | Line 47, Column 38 | q904 --[\r]--> q904
-ACCEPT | [@ Serve the order and accept payment.
-HAIN po {
-    RESIBO:ilimbag() at nang ng ang ay nito opo.
-}
-
-BAYAD lang {
-    KUNDISYON sapat_ang_bayad = bayad_pera >= kabuuan &&
-                                 bayad_pera > subtotal.
-
-    KUNG sapat_ang_bayad == TAMA && bayad_pera != 0 {
-        NUMERO sukli = RESIBO:bayaran(bayad_pera).
-        sukli_barya = sukli.
-
-        KUNG ! (sapat_ang_bayad == MALI) &&
-             (sukli >= 0 || bayad_pera == kabuuan) {
-            RESIBO:ilimbag().
-        }
-    } KUNDI {
-        RESIBO:ilimbag().
-    }
-}
-
-@ Close the register after all orders are complete.
-NUMERO natitirang_order = bilang_order.
-ULIT (natitirang_order > 0) {
-    natitirang_order = natitirang_order - 1.
-
-    KUNG natitirang_order > 0 {
-        TULOY.
-    } KUNDI {
-        HINTO.
-    }
-}
-
-ULAM:bawas("Adobo", bilang_order).
-RESIBO:linisin().
-
-@ Receipt/export markers supported by the lexer.
-; # $
-] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
+ACCEPT | [@ Serve the order and accept payment.] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
 SCAN | Line 47, Column 39 | Character: [\n] | Class: WHITESPACE
 DFA | Line 47, Column 39 | q0 --[\n]--> q0
 SCAN | Line 48, Column 1 | Character: [H] | Class: LETTER
@@ -4879,24 +4546,7 @@ SCAN | Line 69, Column 51 | Character: [.] | Class: COMMENT
 DFA | Line 69, Column 51 | q904 --[.]--> q904
 SCAN | Line 69, Column 52 | Character: [\r] | Class: COMMENT
 DFA | Line 69, Column 52 | q904 --[\r]--> q904
-ACCEPT | [@ Close the register after all orders are complete.
-NUMERO natitirang_order = bilang_order.
-ULIT (natitirang_order > 0) {
-    natitirang_order = natitirang_order - 1.
-
-    KUNG natitirang_order > 0 {
-        TULOY.
-    } KUNDI {
-        HINTO.
-    }
-}
-
-ULAM:bawas("Adobo", bilang_order).
-RESIBO:linisin().
-
-@ Receipt/export markers supported by the lexer.
-; # $
-] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
+ACCEPT | [@ Close the register after all orders are complete.] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
 SCAN | Line 69, Column 53 | Character: [\n] | Class: WHITESPACE
 DFA | Line 69, Column 53 | q0 --[\n]--> q0
 SCAN | Line 70, Column 1 | Character: [N] | Class: LETTER
@@ -5582,9 +5232,7 @@ SCAN | Line 84, Column 48 | Character: [.] | Class: COMMENT
 DFA | Line 84, Column 48 | q904 --[.]--> q904
 SCAN | Line 84, Column 49 | Character: [\r] | Class: COMMENT
 DFA | Line 84, Column 49 | q904 --[\r]--> q904
-ACCEPT | [@ Receipt/export markers supported by the lexer.
-; # $
-] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
+ACCEPT | [@ Receipt/export markers supported by the lexer.] | State: q904 | Token: LINE_COMMENT | Class: COMMENT
 SCAN | Line 84, Column 50 | Character: [\n] | Class: WHITESPACE
 DFA | Line 84, Column 50 | q0 --[\n]--> q0
 SCAN | Line 85, Column 1 | Character: [;] | Class: SYMBOL
