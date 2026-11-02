@@ -1,5 +1,3 @@
-@ Invalid-token demonstration. Each unsupported symbol is intentional.
-
 NUMERO valid_value = 25.
 
 @ Tilde is not a recognized JAVArice symbol.

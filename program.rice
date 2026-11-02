@@ -1,14 +1,12 @@
-@ JAVArice canteen checkout program
-
 @ Prepare the menu and initialize the register.
 ULAM:ilagay("Adobo", 120.00).
 ULAM:ilagay("Sinigang", 150.00).
-ULAM:ilagay("Kanin", 15.00).
+ULAM:ilagay("Kañin", 15.00).
 
 NUMERO bayad_pera = 500.00.
 NUMERO bilang_order = 2.
 NUMERO subtotal = 120.00 * bilang_order + 15.00 * bilang_order.
-LETRA station = 'A'.
+LETRA station = "A".
 SALITA customer = "Maya".
 BUO sukli_barya = 0.
 KUNDISYON may_sapat_na_stock = TAMA.
@@ -16,11 +14,11 @@ KUNDISYON may_sapat_na_stock = TAMA.
 @ Take the customer's order and check the available stock.
 ORDER po na lang {
     RESIBO:dagdag("Adobo", bilang_order).
-    RESIBO:dagdag("Kanin", bilang_order).
+    RESIBO:dagdag("Kañin", bilang_order).
 
     KUNG ULAM:meron("Adobo") == TAMA && may_sapat_na_stock {
         ULAM:kumuha("Adobo").
-        ULAM:kumuha("Kanin").
+        ULAM:kumuha("Kañin").
     } KUNDI {
         MALI.
         HINTO.
@@ -80,3 +78,4 @@ ULIT (natitirang_order > 0) {
 
 ULAM:bawas("Adobo", bilang_order).
 RESIBO:linisin().
+

@@ -1,5 +1,3 @@
-@ Error handling demonstration: the errors below are intentional.
-
 @ Unsupported character: the lexer should report an unrecognized character.
 NUMERO total = 100.
 ~
