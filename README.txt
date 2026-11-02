@@ -26,9 +26,8 @@ files, skip this section.
 DEPENDENCIES AND INSTALLATION
 -----------------------------
 
-The project has no third-party library dependencies. It requires GCC, a
-C compiler, to build lexer.c. GCC's C standard library comes with the
-compiler toolchain.
+The project has no third-party library dependencies. It requires GCC to build
+its four C modules. GCC's C standard library comes with the compiler toolchain.
 
 To install GCC on Windows:
 
@@ -63,11 +62,17 @@ To install the C compiler on macOS:
 BUILDING AND RUNNING
 --------------------
 
-The source code is in one file: lexer.c.
+The source code is divided into three modules:
+
+    main.c   - command-line handling and output-file management
+    lexer.c  - source reading and scanning
+    dfa.c    - finite-automaton transitions, token labels, and output helpers
+
+The matching .h files contain the interfaces shared between modules.
 
 To compile with GCC, open a terminal in this folder and run:
 
-    gcc -std=c11 -Wall -Wextra -pedantic lexer.c -o lexer.exe
+    gcc -std=c11 -Wall -Wextra -pedantic main.c lexer.c dfa.c -o lexer.exe
 
 To run the lexer on the sample program:
 
@@ -83,7 +88,7 @@ To run the invalid-token demonstration:
 
 On macOS, compile with Clang from Terminal in this folder:
 
-    clang -std=c11 -Wall -Wextra -pedantic lexer.c -o lexer
+    clang -std=c11 -Wall -Wextra -pedantic main.c lexer.c dfa.c -o lexer
 
 Run the sample program:
 
@@ -106,14 +111,15 @@ in the current working directory.
 FINITE AUTOMATON AND TOKENIZATION
 ---------------------------------
 
-Words and symbols are recognized through per-character transitions in the
-finite automaton. The lexer does not compare complete source words using
-direct string-matching functions. Exact transitions for configured words
-take precedence over the generic identifier transitions.
+The DFA transitions are explicit in dfa.c. dfa_step switches on the current
+state, then switches on the input character to select the next state. For
+example, B moves to WORD_B, U moves to WORD_BU, and O moves to WORD_BUO.
+Reaching an accepting state determines the token; no completed-word comparison
+is performed. ORDERX continues through the identifier path and is emitted as
+an identifier rather than as ORDER followed by another token.
 
-When a word reaches a boundary, its accepting state determines its token.
-For example, ORDERX is recognized as an identifier, not as the ORDER
-reserved word followed by another token.
+dfa.c maps the resulting token kind to its printed label and writes the
+token-table and acceptance records.
 
 
 SYMBOL TABLE OUTPUT
@@ -134,8 +140,9 @@ recognized as a keyword, reserved word, or identifier.
 LEXEME AND TOKEN TABLES
 -----------------------
 
-The counts below match the definitions in lexer.c: 11 keywords, 31 reserved
-words, 11 noise words, 17 operation symbols, and 4 delimiters/brackets.
+The counts below match the transitions and accepting states in dfa.c:
+11 keywords, 31 reserved words, 11 noise words, 17 operation symbols, and
+4 delimiters/brackets.
 
 KEYWORDS (11)
 Lexeme       Token

@@ -1,359 +1,13 @@
+#include "lexer.h"
+#include "dfa.h"
+#include "token.h"
+
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-
-#define MAX_TRANSITIONS 1024
-#define MAX_ACCEPTS 128
-#define MAX_TOKEN_LENGTH 4096
-#define SYMBOL_TABLE_FILE "Symbol Table"
-
-enum {
-    CLASS_ALPHA = 256,
-    CLASS_DIGIT,
-    CLASS_UNDERSCORE,
-    CLASS_WHITESPACE,
-    CLASS_ANY
-};
-
-enum {
-    STATE_START = 0,
-    STATE_IDENTIFIER = 900,
-    STATE_INTEGER = 901,
-    STATE_DECIMAL = 902,
-    STATE_STRING = 903,
-    STATE_COMMENT = 904,
-    STATE_ERROR = 905,
-    STATE_CHAR = 906,
-    STATE_ASSIGN = 910,
-    STATE_NOT = 911,
-    STATE_GREATER = 912,
-    STATE_LESS = 913,
-    STATE_AMPERSAND = 914,
-    STATE_PIPE = 915
-};
-
-typedef struct {
-    int from;
-    int input;
-    int to;
-} Transition;
-
-typedef struct {
-    int state;
-    char token_type[40];
-    char classification[32];
-    int ignored;
-} AcceptingState;
-
-typedef struct {
-    const char *lexeme;
-    const char *token_type;
-    const char *classification;
-    int ignored;
-} WordDefinition;
-
-static Transition transitions[MAX_TRANSITIONS];
-static size_t transition_count;
-static AcceptingState accepting_states[MAX_ACCEPTS];
-static size_t accepting_count;
-static int next_word_state = 1;
-static int next_symbol_state = 920;
-
-static const WordDefinition words[] = {
-    {"LETRA", "TOKEN_KW_LETRA", "KEYWORD", 0},
-    {"SALITA", "TOKEN_KW_SALITA", "KEYWORD", 0},
-    {"BUO", "TOKEN_KW_BUO", "KEYWORD", 0},
-    {"NUMERO", "TOKEN_KW_NUMERO", "KEYWORD", 0},
-    {"KUNDISYON", "TOKEN_KW_KUNDISYON", "KEYWORD", 0},
-    {"KUNG", "TOKEN_KW_KUNG", "KEYWORD", 0},
-    {"KUNDI", "TOKEN_KW_KUNDI", "KEYWORD", 0},
-    {"ULIT", "TOKEN_KW_ULIT", "KEYWORD", 0},
-    {"HINTO", "TOKEN_KW_HINTO", "KEYWORD", 0},
-    {"TULOY", "TOKEN_KW_TULOY", "KEYWORD", 0},
-    {"WALA", "TOKEN_KW_WALA", "KEYWORD", 0},
-    {"TAMA", "TOKEN_RES_TAMA", "RESERVED_WORD", 0},
-    {"MALI", "TOKEN_RES_MALI", "RESERVED_WORD", 0},
-    {"KATUMBAS", "TOKEN_RES_KATUMBAS", "RESERVED_WORD", 0},
-    {"ULAM", "TOKEN_RES_ULAM", "BUILT_IN_OBJECT", 0},
-    {"ilagay", "TOKEN_RES_ilagay", "BUILT_IN_METHOD", 0},
-    {"meron", "TOKEN_RES_meron", "BUILT_IN_METHOD", 0},
-    {"kumuha", "TOKEN_RES_kumuha", "BUILT_IN_METHOD", 0},
-    {"RESIBO", "TOKEN_RES_RESIBO", "BUILT_IN_OBJECT", 0},
-    {"dagdag", "TOKEN_RES_dagdag", "BUILT_IN_METHOD", 0},
-    {"bawas", "TOKEN_RES_bawas", "BUILT_IN_METHOD", 0},
-    {"kalkula", "TOKEN_RES_kalkula", "BUILT_IN_METHOD", 0},
-    {"diskwento", "TOKEN_RES_diskwento", "BUILT_IN_METHOD", 0},
-    {"bayaran", "TOKEN_RES_bayaran", "BUILT_IN_METHOD", 0},
-    {"ilimbag", "TOKEN_RES_ilimbag", "BUILT_IN_METHOD", 0},
-    {"linisin", "TOKEN_RES_linisin", "BUILT_IN_METHOD", 0},
-    {"hatian", "TOKEN_RES_hatian", "BUILT_IN_METHOD", 0},
-    {"ORDER", "TOKEN_RES_ORDER", "TRANSACTION_VERB", 0},
-    {"LUTO", "TOKEN_RES_LUTO", "TRANSACTION_VERB", 0},
-    {"HAIN", "TOKEN_RES_HAIN", "TRANSACTION_VERB", 0},
-    {"BAYAD", "TOKEN_RES_BAYAD", "TRANSACTION_VERB", 0},
-    {"po", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"na", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"lang", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"at", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"nang", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"ng", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"ang", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"ay", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"nito", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"opo", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1},
-    {"ngani", "TOKEN_NOISE_WORD", "IGNORED_NOISE_WORD", 1}
-};
-
-static const WordDefinition symbols[] = {
-    {".", "TOKEN_TERMINATOR", "PUNCTUATION", 0},
-    {",", "TOKEN_SEPARATOR", "PUNCTUATION", 0},
-    {":", "TOKEN_ACCESSOR", "OPERATOR", 0},
-    {"(", "TOKEN_LPAREN", "DELIMITER", 0},
-    {")", "TOKEN_RPAREN", "DELIMITER", 0},
-    {"{", "TOKEN_LBRACE", "DELIMITER", 0},
-    {"}", "TOKEN_RBRACE", "DELIMITER", 0},
-    {"+", "TOKEN_OP_ADD", "ARITHMETIC_OPERATOR", 0},
-    {"-", "TOKEN_OP_SUB", "ARITHMETIC_OPERATOR", 0},
-    {"*", "TOKEN_OP_MUL", "ARITHMETIC_OPERATOR", 0},
-    {"/", "TOKEN_OP_DIV", "ARITHMETIC_OPERATOR", 0},
-    {"%", "TOKEN_OP_MOD", "ARITHMETIC_OPERATOR", 0},
-    {"\\", "TOKEN_OP_INTDIV", "ARITHMETIC_OPERATOR", 0},
-    {"^", "TOKEN_OP_POW", "ARITHMETIC_OPERATOR", 0},
-    {"=", "TOKEN_ASSIGNMENT", "OPERATOR", 0},
-    {"==", "TOKEN_REL_EQ", "RELATIONAL_OPERATOR", 0},
-    {"!=", "TOKEN_REL_NEQ", "RELATIONAL_OPERATOR", 0},
-    {">", "TOKEN_REL_GT", "RELATIONAL_OPERATOR", 0},
-    {">=", "TOKEN_REL_GTE", "RELATIONAL_OPERATOR", 0},
-    {"<", "TOKEN_REL_LT", "RELATIONAL_OPERATOR", 0},
-    {"<=", "TOKEN_REL_LTE", "RELATIONAL_OPERATOR", 0},
-    {"!", "TOKEN_LOGIC_NOT", "LOGICAL_OPERATOR", 0},
-    {"&&", "TOKEN_LOGIC_AND", "LOGICAL_OPERATOR", 0},
-    {"||", "TOKEN_LOGIC_OR", "LOGICAL_OPERATOR", 0}
-};
-
-static int is_filipino_letter(const unsigned char *s, size_t pos, size_t length)
-{
-    if (pos + 1 < length && s[pos] == 0xC3 &&
-        (s[pos + 1] == 0xB1 || s[pos + 1] == 0x91)) {
-        return 1;
-    }
-    return 0;
-}
-
-static int is_identifier_start(int c)
-{
-    return isalpha((unsigned char)c);
-}
-
-static int is_identifier_part(int c)
-{
-    return isalnum((unsigned char)c) || c == '_';
-}
-
-static int is_id_start(const char *source, size_t pos, size_t length)
-{
-    if (is_filipino_letter((const unsigned char *)source, pos, length)) {
-        return 1;
-    }
-    return is_identifier_start((unsigned char)source[pos]);
-}
-
-static int is_id_part(const char *source, size_t pos, size_t length)
-{
-    if (is_filipino_letter((const unsigned char *)source, pos, length)) {
-        return 1;
-    }
-    return is_identifier_part((unsigned char)source[pos]);
-}
-
-static int is_whitespace(int c)
-{
-    return c == ' ' || c == '\t' || c == '\r' || c == '\n';
-}
-
-static int add_transition(int from, int input, int to)
-{
-    if (transition_count >= MAX_TRANSITIONS) {
-        return 0;
-    }
-    transitions[transition_count++] = (Transition){from, input, to};
-    return 1;
-}
-
-static int find_transition(int from, int input)
-{
-    size_t i;
-    for (i = 0; i < transition_count; ++i) {
-        if (transitions[i].from == from && transitions[i].input == input) {
-            return transitions[i].to;
-        }
-    }
-    return -1;
-}
-
-static int add_accept(int state, const char *type,
-                      const char *classification, int ignored)
-{
-    AcceptingState *entry;
-    if (accepting_count >= MAX_ACCEPTS) {
-        return 0;
-    }
-    entry = &accepting_states[accepting_count++];
-    entry->state = state;
-    snprintf(entry->token_type, sizeof entry->token_type, "%s", type);
-    snprintf(entry->classification, sizeof entry->classification, "%s",
-             classification);
-    entry->ignored = ignored;
-    return 1;
-}
-
-static const AcceptingState *find_accept(int state)
-{
-    size_t i;
-    for (i = 0; i < accepting_count; ++i) {
-        if (accepting_states[i].state == state) {
-            return &accepting_states[i];
-        }
-    }
-    return NULL;
-}
-
-static int insert_word(const WordDefinition *word, int *created_states,
-                       size_t *created_count, size_t created_capacity)
-{
-    int state = STATE_START;
-    const unsigned char *p = (const unsigned char *)word->lexeme;
-    while (*p != '\0') {
-        int next = find_transition(state, *p);
-        if (next < 0) {
-            if (*created_count >= created_capacity) {
-                return 0;
-            }
-            next = next_word_state++;
-            if (!add_transition(state, *p, next)) {
-                return 0;
-            }
-            created_states[(*created_count)++] = next;
-        }
-        state = next;
-        ++p;
-    }
-    return add_accept(state, word->token_type, word->classification,
-                      word->ignored);
-}
-
-static int insert_symbol(const WordDefinition *symbol)
-{
-    int state = STATE_START;
-    const unsigned char *p = (const unsigned char *)symbol->lexeme;
-    while (*p != '\0') {
-        int next = find_transition(state, *p);
-        if (next < 0) {
-            next = next_symbol_state++;
-            if (!add_transition(state, *p, next)) {
-                return 0;
-            }
-        }
-        state = next;
-        ++p;
-    }
-    return add_accept(state, symbol->token_type, symbol->classification, 0);
-}
-
-static int initialize_automaton(void)
-{
-    int word_states[MAX_TRANSITIONS];
-    size_t word_state_count = 0;
-    size_t i;
-
-    for (i = 0; i < sizeof words / sizeof words[0]; ++i) {
-        if (!insert_word(&words[i], word_states, &word_state_count,
-                         MAX_TRANSITIONS)) {
-            return 0;
-        }
-    }
-
-    for (i = 0; i < sizeof symbols / sizeof symbols[0]; ++i) {
-        if (!insert_symbol(&symbols[i])) {
-            return 0;
-        }
-    }
-
-    if (!add_transition(STATE_START, CLASS_ALPHA, STATE_IDENTIFIER) ||
-        !add_transition(STATE_IDENTIFIER, CLASS_ALPHA, STATE_IDENTIFIER) ||
-        !add_transition(STATE_IDENTIFIER, CLASS_DIGIT, STATE_IDENTIFIER) ||
-        !add_transition(STATE_IDENTIFIER, CLASS_UNDERSCORE,
-                        STATE_IDENTIFIER) ||
-        !add_transition(STATE_START, CLASS_DIGIT, STATE_INTEGER) ||
-        !add_transition(STATE_INTEGER, CLASS_DIGIT, STATE_INTEGER) ||
-        !add_transition(STATE_INTEGER, '.', STATE_DECIMAL) ||
-        !add_transition(STATE_DECIMAL, CLASS_DIGIT, STATE_DECIMAL) ||
-        !add_transition(STATE_START, CLASS_WHITESPACE, STATE_START) ||
-        !add_transition(STATE_START, CLASS_ANY, STATE_ERROR) ||
-        !add_transition(STATE_START, '"', STATE_STRING) ||
-        !add_transition(STATE_START, '\'', STATE_CHAR) ||
-        !add_transition(STATE_START, '@', STATE_COMMENT) ||
-        !add_transition(STATE_COMMENT, CLASS_ANY, STATE_COMMENT) ||
-        !add_transition(STATE_STRING, '"', STATE_START) ||
-        !add_transition(STATE_STRING, CLASS_ANY, STATE_STRING) ||
-        !add_transition(STATE_CHAR, '\'', STATE_START) ||
-        !add_transition(STATE_CHAR, CLASS_ANY, STATE_CHAR)) {
-        return 0;
-    }
-
-    for (i = 0; i < word_state_count; ++i) {
-        if (!add_transition(word_states[i], CLASS_ALPHA, STATE_IDENTIFIER) ||
-            !add_transition(word_states[i], CLASS_DIGIT, STATE_IDENTIFIER) ||
-            !add_transition(word_states[i], CLASS_UNDERSCORE,
-                            STATE_IDENTIFIER)) {
-            return 0;
-        }
-    }
-
-    return add_accept(STATE_IDENTIFIER, "TOKEN_IDENTIFIER", "IDENTIFIER", 0) &&
-           add_accept(STATE_INTEGER, "TOKEN_BUO_LITERAL", "INTEGER_LITERAL",
-                      0) &&
-           add_accept(STATE_DECIMAL, "TOKEN_NUMERO_LITERAL",
-                      "DECIMAL_LITERAL", 0) &&
-           add_accept(STATE_CHAR, "TOKEN_LETRA_LITERAL", "CHARACTER_LITERAL",
-                      0);
-}
-
-static int dfa_step(int state, int c)
-{
-    int exact = find_transition(state, c);
-    int input_class;
-    int transition;
-
-    if (exact >= 0) {
-        return exact;
-    }
-    if (state == STATE_COMMENT) {
-        return find_transition(state, CLASS_ANY);
-    }
-    if (state == STATE_STRING) {
-        return find_transition(state, CLASS_ANY);
-    }
-    if (state == STATE_CHAR) {
-        return find_transition(state, CLASS_ANY);
-    }
-    if (isalpha((unsigned char)c)) {
-        input_class = CLASS_ALPHA;
-    } else if (isdigit((unsigned char)c)) {
-        input_class = CLASS_DIGIT;
-    } else if (c == '_') {
-        input_class = CLASS_UNDERSCORE;
-    } else if (is_whitespace(c)) {
-        input_class = CLASS_WHITESPACE;
-    } else {
-        return find_transition(state, CLASS_ANY);
-    }
-    transition = find_transition(state, input_class);
-    return transition;
-}
 
 static void write_trace_str(FILE *out, const char *kind, size_t line,
                             size_t column, const char *display,
@@ -366,7 +20,6 @@ static void write_trace_str(FILE *out, const char *kind, size_t line,
                  " | Class: %s\n",
             kind, line, column, display, classification);
 }
-
 static void write_transition_str(FILE *out, size_t line, size_t column,
                                  int from, const char *display, int to)
 {
@@ -415,65 +68,6 @@ static void write_transition(FILE *out, size_t line, size_t column,
     }
 }
 
-static void write_symbol_span(FILE *out, const char *type,
-                              const char *lexeme, size_t length)
-{
-    const char *cursor;
-    size_t displayed_width = 0;
-    size_t i;
-    fprintf(out, "%-24s | ", type);
-    for (i = 0, cursor = lexeme; i < length; ++i, ++cursor) {
-        if (*cursor == '|') {
-            fputs("\\|", out);
-            displayed_width += 2;
-        } else {
-            fputc(*cursor, out);
-            ++displayed_width;
-        }
-    }
-    while (displayed_width < 40) {
-        fputc(' ', out);
-        ++displayed_width;
-    }
-    fputc('\n', out);
-}
-
-static void write_symbol(FILE *out, const char *type, const char *lexeme)
-{
-    write_symbol_span(out, type, lexeme, strlen(lexeme));
-}
-
-static void write_acceptance_span(FILE *out, const char *lexeme,
-                                  size_t length, const char *token_type,
-                                  const char *classification, int state)
-{
-    if (out != NULL) {
-        size_t i;
-        fprintf(out, "ACCEPT | [");
-        for (i = 0; i < length; ++i) {
-            fputc(lexeme[i], out);
-        }
-        fprintf(out, "] | State: q%d | Token: %s | Class: %s\n",
-                state, token_type, classification);
-    }
-}
-
-static void write_acceptance(FILE *out, const char *lexeme,
-                             const char *token_type,
-                             const char *classification, int state)
-{
-    write_acceptance_span(out, lexeme, strlen(lexeme), token_type,
-                          classification, state);
-}
-
-static void report_error(FILE *out, size_t line, size_t column,
-                         const char *message)
-{
-    fprintf(stderr, "Lexer error at line %zu, column %zu: %s\n",
-            line, column, message);
-    write_symbol(out, "INVALID", message);
-}
-
 static int append_char(char **buffer, size_t *length, size_t *capacity,
                        int c)
 {
@@ -504,7 +98,7 @@ static int valid_source_extension(const char *path)
            path[length - 1] == 'e';
 }
 
-static int read_source(const char *path, char **source, size_t *length)
+int lexer_read_source(const char *path, char **source, size_t *length)
 {
     FILE *file;
     struct stat metadata;
@@ -597,7 +191,7 @@ static int read_source(const char *path, char **source, size_t *length)
     return 1;
 }
 
-static int scan_source(const char *source, size_t length, FILE *log,
+int lexer_scan(const char *source, size_t length, FILE *log,
                        FILE *tokens)
 {
     size_t pos = 0;
@@ -610,7 +204,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
         size_t token_column = column;
         int c = (unsigned char)source[pos];
 
-        if (is_whitespace(c)) {
+        if (dfa_is_whitespace(c)) {
             int next = dfa_step(STATE_START, c);
             write_trace(log, "SCAN", line, column, c, "WHITESPACE");
             write_transition(log, line, column, STATE_START, c, next);
@@ -629,7 +223,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
             size_t comment_length;
             int state = STATE_START;
             while (pos < length && source[pos] != '\n') {
-                if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+                if (dfa_is_filipino_letter((const unsigned char *)source, pos, length)) {
                     char letter_buf[3] = {source[pos], source[pos + 1], '\0'};
                     int next = dfa_step(state, CLASS_ANY);
                     write_trace_str(log, "SCAN", line, column, letter_buf, "COMMENT");
@@ -654,35 +248,35 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 source[comment_start + comment_length - 1] == '\r') {
                 --comment_length;
             }
-            write_symbol_span(tokens, "LINE_COMMENT",
+            dfa_write_symbol_span(tokens, "LINE_COMMENT",
                               source + comment_start, comment_length);
-            write_acceptance_span(log, source + comment_start, comment_length,
-                                  "LINE_COMMENT", "COMMENT", state);
+            dfa_write_acceptance_span(log, source + comment_start, comment_length,
+                                  TOKEN_KIND_LINE_COMMENT, "COMMENT", state);
             continue;
         }
 
         if (c == '_') {
             write_trace(log, "SCAN", line, column, c, "UNDERSCORE");
             write_transition(log, line, column, STATE_START, c, STATE_ERROR);
-            while (pos < length && is_id_part(source, pos, length)) {
-                if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+            while (pos < length && dfa_is_identifier_part(source, pos, length)) {
+                if (dfa_is_filipino_letter((const unsigned char *)source, pos, length)) {
                     pos += 2;
                 } else {
                     pos += 1;
                 }
                 ++column;
             }
-            report_error(tokens, token_line, token_column,
+            dfa_report_error(tokens, token_line, token_column,
                          "Identifier must not begin with an underscore.");
             ++errors;
             continue;
         }
 
-        if (is_id_start(source, pos, length)) {
+        if (dfa_is_identifier_start(source, pos, length)) {
             size_t start = pos;
             int state = STATE_START;
-            while (pos < length && is_id_part(source, pos, length)) {
-                if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+            while (pos < length && dfa_is_identifier_part(source, pos, length)) {
+                if (dfa_is_filipino_letter((const unsigned char *)source, pos, length)) {
                     int next = STATE_IDENTIFIER;
                     char letter_buf[3] = {source[pos], source[pos + 1], '\0'};
                     write_trace_str(log, "SCAN", line, column, letter_buf, "LETTER");
@@ -706,11 +300,11 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 }
             }
             {
-                const AcceptingState *accepted = find_accept(state);
+                const AcceptingState *accepted = dfa_find_accept(state);
                 size_t token_length = pos - start;
                 char *lexeme = malloc(token_length + 1);
                 if (lexeme == NULL) {
-                    report_error(tokens, token_line, token_column,
+                    dfa_report_error(tokens, token_line, token_column,
                                  "Out of memory allocating identifier token.");
                     ++errors;
                     continue;
@@ -718,13 +312,13 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 memcpy(lexeme, source + start, token_length);
                 lexeme[token_length] = '\0';
                 if (accepted == NULL) {
-                    write_symbol(tokens, "TOKEN_IDENTIFIER", lexeme);
-                    write_acceptance(log, lexeme, "TOKEN_IDENTIFIER",
-                                     "IDENTIFIER", state);
+                    dfa_write_symbol(tokens, TOKEN_KIND_IDENTIFIER, lexeme);
+                    dfa_write_acceptance(log, lexeme, TOKEN_KIND_IDENTIFIER,
+                                           "IDENTIFIER", state);
                 } else {
-                    write_symbol(tokens, accepted->token_type, lexeme);
-                    write_acceptance(log, lexeme, accepted->token_type,
-                                     accepted->classification, state);
+                    dfa_write_symbol(tokens, accepted->kind, lexeme);
+                    dfa_write_acceptance(log, lexeme, accepted->kind,
+                                           accepted->classification, state);
                 }
                 free(lexeme);
             }
@@ -768,24 +362,24 @@ static int scan_source(const char *source, size_t length, FILE *log,
             }
             {
                 size_t token_length = pos - start;
-                const AcceptingState *accepted = find_accept(state);
+                const AcceptingState *accepted = dfa_find_accept(state);
                 if (accepted == NULL) {
-                    report_error(tokens, token_line, token_column,
+                    dfa_report_error(tokens, token_line, token_column,
                                  "Invalid numeric literal.");
                     ++errors;
                     continue;
                 }
                 char *lexeme = malloc(token_length + 1);
                 if (lexeme == NULL) {
-                    report_error(tokens, token_line, token_column,
+                    dfa_report_error(tokens, token_line, token_column,
                                  "Out of memory allocating numeric literal.");
                     ++errors;
                     continue;
                 }
                 memcpy(lexeme, source + start, token_length);
                 lexeme[token_length] = '\0';
-                write_symbol(tokens, accepted->token_type, lexeme);
-                write_acceptance(log, lexeme, accepted->token_type,
+                dfa_write_symbol(tokens, accepted->kind, lexeme);
+                dfa_write_acceptance(log, lexeme, accepted->kind,
                                  accepted->classification, state);
                 free(lexeme);
             }
@@ -803,7 +397,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
             ++column;
 
             if (pos >= length || source[pos] == '\n' || source[pos] == '\r') {
-                report_error(tokens, token_line, token_column,
+                dfa_report_error(tokens, token_line, token_column,
                              "Unterminated character literal.");
                 ++errors;
                 continue;
@@ -812,7 +406,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
             if (source[pos] == '\'') {
                 write_trace(log, "SCAN", line, column, '\'', "CHAR_DELIMITER");
                 write_transition(log, line, column, state, '\'', STATE_ERROR);
-                report_error(tokens, token_line, token_column,
+                dfa_report_error(tokens, token_line, token_column,
                              "Empty character literal is not allowed.");
                 ++errors;
                 ++pos;
@@ -820,7 +414,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 continue;
             }
 
-            if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+            if (dfa_is_filipino_letter((const unsigned char *)source, pos, length)) {
                 char letter_buf[3] = {source[pos], source[pos + 1], '\0'};
                 write_trace_str(log, "SCAN", line, column, letter_buf, "CHAR_CONTENT");
                 write_transition_str(log, line, column, state, letter_buf, state);
@@ -843,15 +437,15 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 size_t token_length = pos - start;
                 char *lexeme = malloc(token_length + 1);
                 if (lexeme == NULL) {
-                    report_error(tokens, token_line, token_column,
+                    dfa_report_error(tokens, token_line, token_column,
                                  "Out of memory allocating character literal.");
                     ++errors;
                     continue;
                 }
                 memcpy(lexeme, source + start, token_length);
                 lexeme[token_length] = '\0';
-                write_symbol(tokens, "TOKEN_LETRA_LITERAL", lexeme);
-                write_acceptance(log, lexeme, "TOKEN_LETRA_LITERAL",
+                dfa_write_symbol(tokens, TOKEN_KIND_LETRA_LITERAL, lexeme);
+                dfa_write_acceptance(log, lexeme, TOKEN_KIND_LETRA_LITERAL,
                                  "CHARACTER_LITERAL", state);
                 free(lexeme);
             } else {
@@ -862,10 +456,10 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 if (pos < length && source[pos] == '\'') {
                     ++pos;
                     ++column;
-                    report_error(tokens, token_line, token_column,
+                    dfa_report_error(tokens, token_line, token_column,
                                  "Character literal may only contain a single character.");
                 } else {
-                    report_error(tokens, token_line, token_column,
+                    dfa_report_error(tokens, token_line, token_column,
                                  "Unterminated character literal.");
                 }
                 ++errors;
@@ -882,7 +476,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
             ++pos;
             ++column;
             while (pos < length && source[pos] != '\n') {
-                if (is_filipino_letter((const unsigned char *)source, pos, length)) {
+                if (dfa_is_filipino_letter((const unsigned char *)source, pos, length)) {
                     char letter_buf[3] = {source[pos], source[pos + 1], '\0'};
                     write_trace_str(log, "SCAN", line, column, letter_buf, "STRING_CHARACTER");
                     write_transition_str(log, line, column, state, letter_buf, state);
@@ -905,7 +499,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 }
             }
             if (!terminated) {
-                report_error(tokens, token_line, token_column,
+                dfa_report_error(tokens, token_line, token_column,
                              "Unterminated string literal.");
                 ++errors;
                 continue;
@@ -914,15 +508,15 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 size_t token_length = pos - start;
                 char *lexeme = malloc(token_length + 1);
                 if (lexeme == NULL) {
-                    report_error(tokens, token_line, token_column,
+                    dfa_report_error(tokens, token_line, token_column,
                                  "Out of memory allocating string literal.");
                     ++errors;
                     continue;
                 }
                 memcpy(lexeme, source + start, token_length);
                 lexeme[token_length] = '\0';
-                write_symbol(tokens, "TOKEN_SALITA_LITERAL", lexeme);
-                write_acceptance(log, lexeme, "TOKEN_SALITA_LITERAL",
+                dfa_write_symbol(tokens, TOKEN_KIND_SALITA_LITERAL, lexeme);
+                dfa_write_acceptance(log, lexeme, TOKEN_KIND_SALITA_LITERAL,
                                  "STRING_LITERAL", state);
                 free(lexeme);
             }
@@ -942,7 +536,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
             }
             if (state == STATE_ERROR) {
                 write_transition(log, line, column, STATE_START, c, state);
-                report_error(tokens, token_line, token_column,
+                dfa_report_error(tokens, token_line, token_column,
                              "Unrecognized character.");
                 ++errors;
                 ++pos;
@@ -953,7 +547,7 @@ static int scan_source(const char *source, size_t length, FILE *log,
             if (pos + 1 < length) {
                 int second = (unsigned char)source[pos + 1];
                 int combined = dfa_step(state, second);
-                if (combined >= 0 && find_accept(combined) != NULL) {
+                if (combined >= 0 && dfa_find_accept(combined) != NULL) {
                     write_trace(log, "SCAN", line, column + 1, second,
                                 "SYMBOL");
                     write_transition(log, line, column + 1, state, second,
@@ -963,9 +557,9 @@ static int scan_source(const char *source, size_t length, FILE *log,
                     token_length = 2;
                 }
             }
-            accepted = find_accept(next_state);
+            accepted = dfa_find_accept(next_state);
             if (accepted == NULL) {
-                report_error(tokens, token_line, token_column,
+                dfa_report_error(tokens, token_line, token_column,
                              "Invalid symbol transition.");
                 if (log != NULL) {
                     fprintf(log, "REJECT | [%s] | State: q%d | No accepting token\n",
@@ -973,8 +567,8 @@ static int scan_source(const char *source, size_t length, FILE *log,
                 }
                 ++errors;
             } else {
-                write_symbol(tokens, accepted->token_type, lexeme);
-                write_acceptance(log, lexeme, accepted->token_type,
+                dfa_write_symbol(tokens, accepted->kind, lexeme);
+                dfa_write_acceptance(log, lexeme, accepted->kind,
                                  accepted->classification, next_state);
             }
             pos += token_length;
@@ -982,119 +576,4 @@ static int scan_source(const char *source, size_t length, FILE *log,
         }
     }
     return errors;
-}
-
-static int copy_stream(FILE *source, FILE *destination)
-{
-    char buffer[4096];
-    size_t bytes_read;
-
-    if (fseek(source, 0, SEEK_SET) != 0) {
-        return 0;
-    }
-    while ((bytes_read = fread(buffer, 1, sizeof buffer, source)) > 0) {
-        if (fwrite(buffer, 1, bytes_read, destination) != bytes_read) {
-            return 0;
-        }
-    }
-    return !ferror(source);
-}
-
-int main(int argc, char **argv)
-{
-    char *source = NULL;
-    size_t source_length = 0;
-    FILE *symbol_table;
-    FILE *scan_log;
-    FILE *token_table;
-    int errors;
-
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <source.rice>\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-    if (!initialize_automaton()) {
-        fprintf(stderr, "Failed to initialize the lexical DFA.\n");
-        return EXIT_FAILURE;
-    }
-    if (!read_source(argv[1], &source, &source_length)) {
-        return EXIT_FAILURE;
-    }
-    scan_log = tmpfile();
-    token_table = tmpfile();
-    if (scan_log == NULL || token_table == NULL) {
-        fprintf(stderr, "Cannot create temporary output files: %s\n",
-                strerror(errno));
-        if (scan_log != NULL) {
-            fclose(scan_log);
-        }
-        if (token_table != NULL) {
-            fclose(token_table);
-        }
-        free(source);
-        return EXIT_FAILURE;
-    }
-    errors = scan_source(source, source_length, scan_log, token_table);
-    free(source);
-    if (fflush(scan_log) != 0 || fflush(token_table) != 0) {
-        fprintf(stderr, "Error buffering temporary lexer output.\n");
-        fclose(scan_log);
-        fclose(token_table);
-        return EXIT_FAILURE;
-    }
-    symbol_table = fopen(SYMBOL_TABLE_FILE, "w");
-    if (symbol_table == NULL) {
-        fprintf(stderr, "Cannot create '%s': %s\n",
-                SYMBOL_TABLE_FILE, strerror(errno));
-        fclose(scan_log);
-        fclose(token_table);
-        return EXIT_FAILURE;
-    }
-    fprintf(symbol_table, "%-24s | %s\n", "TOKEN TYPE", "LEXEME");
-    fprintf(symbol_table,
-            "------------------------ | ----------------------------------------\n");
-    if (!copy_stream(token_table, symbol_table)) {
-        fprintf(stderr, "Error writing token table to '%s'.\n",
-                SYMBOL_TABLE_FILE);
-        fclose(scan_log);
-        fclose(token_table);
-        fclose(symbol_table);
-        return EXIT_FAILURE;
-    }
-    fprintf(symbol_table,
-            "\nCHARACTER-BY-CHARACTER SCAN AND DFA TRANSITIONS\n");
-    fprintf(symbol_table,
-            "ACCEPT rows show the final accepting state and token category.\n"
-            "REJECT rows show lexemes that reached no accepting token state.\n");
-    if (!copy_stream(scan_log, symbol_table)) {
-        fprintf(stderr, "Error writing DFA trace to '%s'.\n",
-                SYMBOL_TABLE_FILE);
-        fclose(scan_log);
-        fclose(token_table);
-        fclose(symbol_table);
-        return EXIT_FAILURE;
-    }
-    if (fclose(scan_log) != 0) {
-        fprintf(stderr, "Error closing temporary DFA trace.\n");
-        fclose(token_table);
-        fclose(symbol_table);
-        return EXIT_FAILURE;
-    }
-    if (fclose(token_table) != 0) {
-        fprintf(stderr, "Error closing temporary output file.\n");
-        fclose(symbol_table);
-        return EXIT_FAILURE;
-    }
-    if (fclose(symbol_table) != 0) {
-        fprintf(stderr, "Error writing '%s'.\n", SYMBOL_TABLE_FILE);
-        return EXIT_FAILURE;
-    }
-    if (errors != 0) {
-        fprintf(stderr, "Lexical analysis completed with %d error(s). "
-                        "See %s.\n", errors, SYMBOL_TABLE_FILE);
-        return EXIT_FAILURE;
-    }
-    printf("Lexical analysis completed successfully. "
-           "Symbol table written to %s.\n", SYMBOL_TABLE_FILE);
-    return EXIT_SUCCESS;
 }
