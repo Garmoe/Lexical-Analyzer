@@ -2,8 +2,8 @@ JAVARICE C LEXICAL ANALYZER
 ===========================
 
 This folder contains an independent C implementation of the JAVArice lexer.
-It reads the source one character at a time and uses a finite automaton,
-starting at state q0, to recognize lexemes and produce tokens.
+It adheres strictly to the canonical textbook lexical analyzer architecture
+taught in Robert W. Sebesta's "Concepts of Programming Languages" (Chapter 4).
 
 
 CLONING THE REPOSITORY
@@ -98,22 +98,33 @@ Run the invalid-token demonstration:
     ./lexer ./program_invalid.rice
 
 The input file must have the .rice extension and contain supported
-printable ASCII text. The lexer creates or replaces a file named
+plain text. The lexer creates or replaces a file named
 "Symbol Table" (with no file extension)
 in the current working directory.
 
 
-FINITE AUTOMATON AND TOKENIZATION
----------------------------------
+TEXTBOOK ARCHITECTURE AND TOKENIZATION
+---------------------------------------
 
-Words and symbols are recognized through per-character transitions in the
-finite automaton. The lexer does not compare complete source words using
-direct string-matching functions. Exact transitions for configured words
-take precedence over the generic identifier transitions.
+The lexical analyzer implements the classic compiler textbook architecture
+described in Robert W. Sebesta's "Concepts of Programming Languages" (Chapter 4,
+Lexical Analysis):
 
-When a word reaches a boundary, its accepting state determines its token.
-For example, ORDERX is recognized as an identifier, not as the ORDER
-reserved word followed by another token.
+1. Explicit Character Classes:
+   - LETTER (0), DIGIT (1), and UNKNOWN (99).
+2. Stream Primitives:
+   - addChar(), getChar(), and getNonBlank() manage character consumption,
+     line/column coordinates, and 2-byte UTF-8 decoding for Filipino letters
+     (ñ and Ñ).
+3. Central Scanner Driver:
+   - lex() uses a single switch (charClass) to dispatch character streams.
+4. Delimiter and Operator Lookup:
+   - lookup() uses switch fall-through and lookahead for multi-character
+     operators (==, !=, <=, >=, &&, ||), delimiters, string/character literals,
+     and single-line comments.
+5. Decoupled Keyword Lookup Table:
+   - lookup_keyword() reclassifies generic identifiers ([a-zA-ZñÑ][a-zA-ZñÑ0-9_]*)
+     into keywords, reserved words, noise words, or user-defined identifiers.
 
 
 SYMBOL TABLE OUTPUT
@@ -229,15 +240,18 @@ OTHER LEXICAL ELEMENTS
 ----------------------
 
 Identifiers:
-    Start with an ASCII letter; subsequent characters may
-    also include digits.
+    Start with an alphabetic character (including Filipino letters ñ and Ñ);
+    subsequent characters may also include digits and underscores.
 
 Numeric literals:
-    Integers and decimal numbers with digits on both sides of the decimal
-    point.
+    Integers (BUO) and decimal numbers (NUMERO) with digits on both sides
+    of the decimal point.
 
 String literals:
-    Double-quoted text on one source line.
+    Double-quoted text (SALITA) on one source line.
+
+Character literals:
+    Single-quoted character (LETRA) on one source line.
 
 Comments:
     Begin with @ and continue to the end of the line.
@@ -245,7 +259,6 @@ Comments:
 Whitespace:
     Spaces, tabs, and line endings.
 
-Unsupported control characters, non-ASCII bytes, unknown symbols, and
-unterminated strings are reported as lexical errors. The lexer writes the
-symbol-table file when lexical errors are found and exits with a failure
-status.
+Unsupported control characters, unknown symbols, and unterminated strings
+are reported as lexical errors. The lexer writes the symbol-table file when
+lexical errors are found and exits with a failure status.
