@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
+/* Writes one trace record when a scan log is enabled. */
 static void write_trace_str(FILE *out, const char *kind, size_t line,
                             size_t column, const char *display,
                             const char *classification)
@@ -20,6 +21,8 @@ static void write_trace_str(FILE *out, const char *kind, size_t line,
                  " | Class: %s\n",
             kind, line, column, display, classification);
 }
+
+/* Writes a transition record for a display string that may span multiple bytes. */
 static void write_transition_str(FILE *out, size_t line, size_t column,
                                  int from, const char *display, int to)
 {
@@ -30,6 +33,7 @@ static void write_transition_str(FILE *out, size_t line, size_t column,
             line, column, from, display, to);
 }
 
+/* Writes one trace record, escaping visible whitespace characters. */
 static void write_trace(FILE *out, const char *kind, size_t line,
                         size_t column, int c, const char *classification)
 {
@@ -50,6 +54,7 @@ static void write_trace(FILE *out, const char *kind, size_t line,
     }
 }
 
+/* Writes a DFA transition, escaping visible whitespace characters. */
 static void write_transition(FILE *out, size_t line, size_t column,
                              int from, int c, int to)
 {
@@ -68,6 +73,7 @@ static void write_transition(FILE *out, size_t line, size_t column,
     }
 }
 
+/* Appends one byte to a dynamically grown, null-terminated source buffer. */
 static int append_char(char **buffer, size_t *length, size_t *capacity,
                        int c)
 {
@@ -87,6 +93,7 @@ static int append_char(char **buffer, size_t *length, size_t *capacity,
     return 1;
 }
 
+/* Checks whether the input path ends with the required lowercase .rice suffix. */
 static int valid_source_extension(const char *path)
 {
     size_t length = strlen(path);
@@ -98,6 +105,7 @@ static int valid_source_extension(const char *path)
            path[length - 1] == 'e';
 }
 
+/* Validates and reads a .rice file into a dynamically allocated source buffer. */
 int lexer_read_source(const char *path, char **source, size_t *length)
 {
     FILE *file;
@@ -191,6 +199,7 @@ int lexer_read_source(const char *path, char **source, size_t *length)
     return 1;
 }
 
+/* Scans source text, writes token and DFA-trace streams, and returns error count. */
 int lexer_scan(const char *source, size_t length, FILE *log,
                        FILE *tokens)
 {

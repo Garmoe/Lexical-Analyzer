@@ -8,6 +8,7 @@
 
 #define SYMBOL_TABLE_FILE "Symbol Table"
 
+/* Copies a rewound temporary stream to the final report stream. */
 static int copy_stream(FILE *source, FILE *destination)
 {
     char buffer[4096];
@@ -24,6 +25,7 @@ static int copy_stream(FILE *source, FILE *destination)
     return !ferror(source);
 }
 
+/* Coordinates source loading, scanning, report assembly, and exit status. */
 int main(int argc, char **argv)
 {
     char *source = NULL;

@@ -280,6 +280,7 @@ static const AcceptingState accepting_states[] = {
     {STATE_CHAR, TOKEN_KIND_LETRA_LITERAL, "CHARACTER_LITERAL", 0},
 };
 
+/* Recognizes the supported UTF-8 encodings of the Filipino letter enye. */
 int dfa_is_filipino_letter(const unsigned char *source, size_t position,
                            size_t length)
 {
@@ -287,34 +288,40 @@ int dfa_is_filipino_letter(const unsigned char *source, size_t position,
            (source[position + 1] == 0xB1 || source[position + 1] == 0x91);
 }
 
+/* Tests whether a single-byte character may begin an identifier. */
 static int is_identifier_start(int character)
 {
     return isalpha((unsigned char)character);
 }
 
+/* Tests whether a single-byte character may continue an identifier. */
 static int is_identifier_part(int character)
 {
     return isalnum((unsigned char)character) || character == '_';
 }
 
+/* Checks an identifier's first source character, including UTF-8 enye. */
 int dfa_is_identifier_start(const char *source, size_t position, size_t length)
 {
     return dfa_is_filipino_letter((const unsigned char *)source, position, length) ||
            is_identifier_start((unsigned char)source[position]);
 }
 
+/* Checks a later identifier character, including digits and underscores. */
 int dfa_is_identifier_part(const char *source, size_t position, size_t length)
 {
     return dfa_is_filipino_letter((const unsigned char *)source, position, length) ||
            is_identifier_part((unsigned char)source[position]);
 }
 
+/* Returns whether a character is one of the lexer's supported whitespace bytes. */
 int dfa_is_whitespace(int character)
 {
     return character == ' ' || character == '\t' ||
            character == '\r' || character == '\n';
 }
 
+/* Finds the token metadata assigned to an accepting DFA state. */
 const AcceptingState *dfa_find_accept(int state)
 {
     size_t i;
@@ -326,6 +333,7 @@ const AcceptingState *dfa_find_accept(int state)
     return NULL;
 }
 
+/* Advances through the explicit word-prefix transitions used for reserved words. */
 static int dfa_step_word(int state, int character)
 {
     switch (state) {
@@ -1355,6 +1363,7 @@ static int dfa_step_word(int state, int character)
     }
 }
 
+/* Advances symbol states, including two-character operators. */
 static int dfa_step_symbol(int state, int character)
 {
     switch (state) {
@@ -1393,6 +1402,7 @@ static int dfa_step_symbol(int state, int character)
     }
 }
 
+/* Applies one DFA transition from a word, symbol, or general lexical state. */
 int dfa_step(int state, int character)
 {
     if (state >= WORD_L && state <= WORD_ngani) {
@@ -1476,6 +1486,7 @@ int dfa_step(int state, int character)
     }
 }
 
+/* Converts an internal token kind into the label printed in reports. */
 const char *dfa_token_kind_name(TokenKind kind)
 {
     switch (kind) {
@@ -1609,6 +1620,7 @@ const char *dfa_token_kind_name(TokenKind kind)
     return "TOKEN_UNKNOWN";
 }
 
+/* Writes one token-table row from a lexeme span without requiring a terminator. */
 void dfa_write_symbol_span(FILE *out, const char *type,
                               const char *lexeme, size_t length)
 {
@@ -1632,11 +1644,13 @@ void dfa_write_symbol_span(FILE *out, const char *type,
     fputc('\n', out);
 }
 
+/* Writes one token-table row using the token kind's printable name. */
 void dfa_write_symbol(FILE *out, TokenKind kind, const char *lexeme)
 {
     dfa_write_symbol_span(out, dfa_token_kind_name(kind), lexeme, strlen(lexeme));
 }
 
+/* Writes an acceptance record from a lexeme span and its final DFA state. */
 void dfa_write_acceptance_span(FILE *out, const char *lexeme,
                                  size_t length, TokenKind kind,
                                  const char *classification, int state)
@@ -1652,6 +1666,7 @@ void dfa_write_acceptance_span(FILE *out, const char *lexeme,
     }
 }
 
+/* Writes an acceptance record for a null-terminated lexeme. */
 void dfa_write_acceptance(FILE *out, const char *lexeme,
                             TokenKind kind,
                             const char *classification, int state)
@@ -1660,6 +1675,7 @@ void dfa_write_acceptance(FILE *out, const char *lexeme,
                                 classification, state);
 }
 
+/* Reports a lexical error to stderr and adds an INVALID row to the token stream. */
 void dfa_report_error(FILE *out, size_t line, size_t column,
                          const char *message)
 {
