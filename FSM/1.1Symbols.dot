@@ -1,0 +1,42 @@
+digraph SymbolLexerFSM {
+    rankdir=TB;
+    compound=true;
+    node [fontname="Georgia", fontsize=11];
+    edge [fontname="Consolas", fontsize=11];
+
+    // ---------------------------------------------------
+    // START STATE (Single Circle)
+    // ---------------------------------------------------
+    node [shape=circle, width=0.9, height=0.9, fixedsize=true]; 
+    S_START [label=<<b>q0</b><br/><font point-size="9" color="#666666">(Start)</font>>];
+    
+    // Entry arrow dummy node
+    node [shape=point, width=0]; 
+    ENTRY;
+    ENTRY -> S_START [label="  START", fontname="Georgia"];
+
+    // ---------------------------------------------------
+    // ACCEPTING STATES (Double Circle for Valid Tokens)
+    // ---------------------------------------------------
+    node [shape=doublecircle, width=0.9, height=0.9, fixedsize=true];
+    // margin="horizontal,vertical" in inches
+    
+    S_PLUS   [label=<<b>q_plus</b><br/>+<br/>>];
+    S_MINUS  [label=<<b>q_minus</b><br/>-<br/>>];
+    S_MUL    [label=<<b>q_mul</b><br/>*<br/>>];
+    S_DIV    [label=<<b>q_div</b><br/>/<br/>>];
+    S_CARET  [label=<<b>q_caret</b><br/>^<br/>>];
+    S_MOD    [label=<<b>q_mod</b><br/>%<br/>>];
+    S_BSLASH [label=<<b>q_bslash</b><br/>\<br/>>];
+
+    // ---------------------------------------------------
+    // TRANSITIONS
+    // ---------------------------------------------------
+    S_START -> S_MOD     [label=" '%' "];
+    S_START -> S_CARET   [label=" '^' "];
+    S_START -> S_PLUS    [label=" '+' "];
+    S_START -> S_MINUS   [label=" '-' "];
+    S_START -> S_MUL     [label=" '*' "];
+    S_START -> S_DIV     [label=" '/' "];    
+    S_START -> S_BSLASH  [label=" '\\' "];    
+}

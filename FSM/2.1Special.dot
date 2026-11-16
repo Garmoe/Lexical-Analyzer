@@ -1,0 +1,161 @@
+digraph KeywordLexerFSM {
+    rankdir=TB;
+    compound=true;
+    ranksep = 0.3; // Reduces vertical distance between ranks (default is 0.75)
+    nodesep = 0.2; // Reduces horizontal distance between nodes in the same rank
+    
+    node [fontname="Georgia", fontsize=11];
+    edge [fontname="Consolas", fontsize=11];
+
+    // ---------------------------------------------------
+    // START STATE
+    // ---------------------------------------------------
+    node [shape=circle, width=1.2, height=1.2, fixedsize=true]; 
+    S_START [label=<<b>q0</b><br/><font point-size="9" color="#666666">(Start)</font>>];
+
+    // Entry arrow dummy node
+    node [shape=point, width=0]; 
+    ENTRY;
+    ENTRY -> S_START [label="   START", fontname="Georgia"];
+
+    // ---------------------------------------------------
+    // INTERMEDIATE STATES (Shared Prefixes)
+    // ---------------------------------------------------
+    node [shape=circle, width=1.2, height=1.2, fixedsize=true];
+    
+    // --- Uppercase 'B' branch ---
+    S_B       [label=<<b>q_B</b><br/>'B'>];
+    S_BA      [label=<<b>q_BA</b><br/>'BA'>];
+    S_BAY     [label=<<b>q_BAY</b><br/>'BAY'>];
+    S_BAYA    [label=<<b>q_BAYA</b><br/>'BAYA'>];
+    
+    S_BU      [label=<<b>q_BU</b><br/>'BU'>];
+
+    // --- 'b' branch ---
+    S_b       [label=<<b>q_b</b><br/>'b'>];
+    S_ba      [label=<<b>q_ba</b><br/>'ba'>];
+    S_baw     [label=<<b>q_baw</b><br/>'baw'>];
+    S_bawa    [label=<<b>q_bawa</b><br/>'bawa'>];
+    S_bay     [label=<<b>q_bay</b><br/>'bay'>];
+    S_baya    [label=<<b>q_baya</b><br/>'baya'>];
+    S_bayar   [label=<<b>q_bayar</b><br/>'bayar'>];
+    S_bayara  [label=<<b>q_bayara</b><br/>'bayara'>];
+
+    // --- 'd' branch ---
+    S_d       [label=<<b>q_d</b><br/>'d'>];
+    S_da      [label=<<b>q_da</b><br/>'da'>];
+    S_dag     [label=<<b>q_dag</b><br/>'dag'>];
+    S_dagd    [label=<<b>q_dagd</b><br/>'dagd'>];
+    S_dagda   [label=<<b>q_dagda</b><br/>'dagda'>];
+    
+    S_di      [label=<<b>q_di</b><br/>'di'>];
+    S_dis     [label=<<b>q_dis</b><br/>'dis'>];
+    S_disk    [label=<<b>q_disk</b><br/>'disk'>];
+    S_diskw   [label=<<b>q_diskw</b><br/>'diskw'>];
+    S_diskwe  [label=<<b>q_diskwe</b><br/>'diskwe'>];
+    S_diskwen [label=<<b>q_diskwen</b><br/>'diskwen'>];
+    S_diskwent [label=<<b>q_diskwent</b><br/>'diskwent'>];
+
+    // ---- 'H' branch ---
+    S_H      [label=<<b>q_H</b><br/>'H'>];
+    S_HA     [label=<<b>q_HA</b><br/>'HA'>];
+    S_HAI   [label=<<b>q_HAI</b><br/>'HAI'>];
+    
+    S_HI    [label=<<b>q_HI</b><br/>'HI'>];
+    S_HIN   [label=<<b>q_HIN</b><br/>'HIN'>];
+    S_HINT  [label=<<b>q_HINT</b><br/>'HINT'>];
+
+    // --- 'h' branch ---
+    S_h      [label=<<b>q_h</b><br/>'h'>];
+    S_ha     [label=<<b>q_ha</b><br/>'ha'>];
+    S_hat    [label=<<b>q_hat</b><br/>'hat'>];
+    S_hati   [label=<<b>q_hati</b><br/>'hati'>];
+    S_hatia  [label=<<b>q_hatia</b><br/>'hatia'>];
+
+    // ---------------------------------------------------
+    // ACCEPTING STATES (Valid Keywords)
+    // ---------------------------------------------------
+    node [shape=doublecircle, width=1.2, height=1.2, fixedsize=true]; 
+
+    S_BAWAS     [label=<<b>q_bawas</b><br/>bawas<br/><font point-size="9" color="#333333">RW_BAWAS</font>>];
+    S_BAYARAN   [label=<<b>q_bayaran</b><br/>bayaran<br/><font point-size="9" color="#333333">RW_BAYARAN</font>>];
+    S_DAGDAG    [label=<<b>q_dagdag</b><br/>dagdag<br/><font point-size="9" color="#333333">RW_DAGDAG</font>>];
+    S_DISKWENTO [label=<<b>q_diskwento</b><br/>diskwento<br/><font point-size="9" color="#333333">RW_DISKWENTO</font>>];
+    S_BAYAD     [label=<<b>q_BAYAD</b><br/>BAYAD<br/><font point-size="9" color="#333333">RW_BAYAD</font>>];
+    S_BUO       [label=<<b>q_BUO</b><br/>BUO<br/><font point-size="9" color="#333333">KW_BUO</font>>];
+    S_HAIN      [label=<<b>q_HAIN</b><br/>HAIN<br/><font point-size="9" color="#333333">RW_HAIN</font>>];
+    S_HINTO     [label=<<b>q_HINTO</b><br/>HINTO<br/><font point-size="9" color="#333333">KW_HINTO</font>>];
+    S_hatian    [label=<<b>q_hatian</b><br/>hatian<br/><font point-size="9" color="#333333">RW_hatian</font>>];
+
+    // ---------------------------------------------------
+    // TRANSITIONS (Trie Construction)
+    // ---------------------------------------------------
+
+    // --- Lowercase 'b' family ---
+    S_START   -> S_b       [label=" 'b' "];
+    S_b       -> S_ba      [label=" 'a' "];
+    
+    // bawas: b-a-w-a-s
+    S_ba      -> S_baw     [label=" 'w' "];
+    S_baw     -> S_bawa    [label=" 'a' "];
+    S_bawa    -> S_BAWAS   [label=" 's' "];
+
+    // bayaran: b-a-y-a-r-a-n
+    S_ba      -> S_bay     [label=" 'y' "];
+    S_bay     -> S_baya    [label=" 'a' "];
+    S_baya    -> S_bayar   [label=" 'r' "];
+    S_bayar   -> S_bayara  [label=" 'a' "];
+    S_bayara  -> S_BAYARAN [label=" 'n' "];
+
+    // --- Lowercase 'd' family ---
+    S_START   -> S_d       [label=" 'd' "];
+    
+    // dagdag: d-a-g-d-a-g
+    S_d       -> S_da      [label=" 'a' "];
+    S_da      -> S_dag     [label=" 'g' "];
+    S_dag     -> S_dagd    [label=" 'd' "];
+    S_dagd    -> S_dagda   [label=" 'a' "];
+    S_dagda   -> S_DAGDAG  [label=" 'g' "];
+
+    // diskwento: d-i-s-k-w-e-n-t-o
+    S_d       -> S_di      [label=" 'i' "];
+    S_di      -> S_dis     [label=" 's' "];
+    S_dis     -> S_disk    [label=" 'k' "];
+    S_disk    -> S_diskw   [label=" 'w' "];
+    S_diskw   -> S_diskwe  [label=" 'e' "];
+    S_diskwe  -> S_diskwen [label=" 'n' "];
+    S_diskwen -> S_diskwent [label=" 't' "];
+    S_diskwent -> S_DISKWENTO [label=" 'o' "];
+
+    // --- Uppercase 'B' family ---
+    S_START   -> S_B       [label=" 'B' "];
+    S_B       -> S_BA      [label=" 'A' "];
+    
+    // BAYAD: B-A-Y-A-D
+    S_BA      -> S_BAY     [label=" 'Y' "];
+    S_BAY     -> S_BAYA    [label=" 'A' "];
+    S_BAYA    -> S_BAYAD [label=" 'D' "];
+
+    // BUO: B-U-O
+    S_B       -> S_BU      [label=" 'U' "];
+    S_BU      -> S_BUO     [label=" 'O' "];
+
+    // --- Uppercase 'H' family ---
+    S_START   -> S_H       [label=" 'H' "];
+    S_H       -> S_HA      [label=" 'A' "];
+    S_HA      -> S_HAI     [label=" 'I' "];
+    S_HAI     -> S_HAIN    [label=" 'N' "];
+
+    S_H       -> S_HI      [label=" 'I' "];
+    S_HI      -> S_HIN     [label=" 'N' "]; 
+    S_HIN     -> S_HINT    [label=" 'T' "];
+    S_HINT    -> S_HINTO   [label=" 'O' "];
+    
+    // --- Lowercase 'h' family ---
+    S_START   -> S_h       [label=" 'h' "]; 
+    S_h       -> S_ha      [label=" 'a' "];
+    S_ha      -> S_hat     [label=" 't' "];
+    S_hat     -> S_hati    [label=" 'i' "]; 
+    S_hati    -> S_hatia   [label=" 'a' "];
+    S_hatia   -> S_hatian  [label=" 'n' "];
+}

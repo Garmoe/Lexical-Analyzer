@@ -1,0 +1,132 @@
+digraph KeywordLexerFSM {
+    rankdir=TB;
+    compound=true;
+    ranksep = 0.3; // Reduces vertical distance between ranks (default is 0.75)
+    nodesep = 0.2; // Reduces horizontal distance between nodes in the same rank
+    
+    node [fontname="Georgia", fontsize=11];
+    edge [fontname="Consolas", fontsize=11];
+
+    // ---------------------------------------------------
+    // START STATE
+    // ---------------------------------------------------
+    node [shape=circle, width=1.2, height=1.2, fixedsize=true]; 
+    S_START [label=<<b>q0</b><br/><font point-size="9" color="#666666">(Start)</font>>];
+
+    // Entry arrow dummy node
+    node [shape=point, width=0]; 
+    ENTRY;
+    ENTRY -> S_START [label="   START", fontname="Georgia"];
+
+    // ---------------------------------------------------
+    // INTERMEDIATE STATES (Shared Prefixes)
+    // ---------------------------------------------------
+    node [shape=circle, width=1.2, height=1.2, fixedsize=true];
+    
+    // --- Uppercase 'O' branch ---
+    S_O      [label=<<b>q_O</b><br/>'O'>];
+    S_OR     [label=<<b>q_OR</b><br/>'OR'>];
+    S_ORD    [label=<<b>q_ORD</b><br/>'ORD'>];
+    S_ORDE   [label=<<b>q_ORDE</b><br/>'ORDE'>];
+
+    // --- Uppercase 'R' branch ---
+    S_R      [label=<<b>q_R</b><br/>'R'>];
+    S_RE     [label=<<b>q_RE</b><br/>'RE'>];
+    S_RES    [label=<<b>q_RES</b><br/>'RES'>];
+    S_RESI   [label=<<b>q_RESI</b><br/>'RESI'>];
+    S_RESIB  [label=<<b>q_RESIB</b><br/>'RESIB'>];
+
+    // --- Uppercase 'S' branch ---
+    S_S      [label=<<b>q_S</b><br/>'S'>];
+    S_SA     [label=<<b>q_SA</b><br/>'SA'>];
+    S_SAL    [label=<<b>q_SAL</b><br/>'SAL'>];
+    S_SALI   [label=<<b>q_SALI</b><br/>'SALI'>];
+    S_SALIT  [label=<<b>q_SALIT</b><br/>'SALIT'>];
+
+    // --- Uppercase 'T' branch ---
+    S_T      [label=<<b>q_T</b><br/>'T'>];
+    S_TA     [label=<<b>q_TA</b><br/>'TA'>];
+    S_TAM    [label=<<b>q_TAM</b><br/>'TAM'>];
+
+    S_TU     [label=<<b>q_TU</b><br/>'TU'>];
+    S_TUL    [label=<<b>q_TUL</b><br/>'TUL'>];
+    S_TULO   [label=<<b>q_TULO</b><br/>'TULO'>];
+
+    // --- Uppercase 'U' branch ---
+    S_U      [label=<<b>q_U</b><br/>'U'>];
+    S_UL     [label=<<b>q_UL</b><br/>'UL'>];
+    S_ULA    [label=<<b>q_ULA</b><br/>'ULA'>];
+    S_ULI    [label=<<b>q_ULI</b><br/>'ULI'>];
+
+    // --- Uppercase 'W' branch ---
+    S_W      [label=<<b>q_W</b><br/>'W'>];
+    S_WA     [label=<<b>q_WA</b><br/>'WA'>];
+    S_WAL    [label=<<b>q_WAL</b><br/>'WAL'>];
+
+    // ---------------------------------------------------
+    // ACCEPTING STATES (Valid Keywords)
+    // ---------------------------------------------------
+    node [shape=doublecircle, width=1.4, height=1.2, fixedsize=true]; 
+
+    S_ORDER    [label=<<b>q_ORDER</b><br/>ORDER<br/><font point-size="9" color="#333333">RW_ORDER</font>>];
+    S_RESIBO   [label=<<b>q_RESIBO</b><br/>RESIBO<br/><font point-size="9" color="#333333">RW_RESIBO</font>>];
+    S_SALITA   [label=<<b>q_SALITA</b><br/>SALITA<br/><font point-size="9" color="#333333">KW_SALITA</font>>];
+    S_TAMA     [label=<<b>q_TAMA</b><br/>TAMA<br/><font point-size="9" color="#333333">RW_TAMA</font>>];
+    S_TULOY    [label=<<b>q_TULOY</b><br/>TULOY<br/><font point-size="9" color="#333333">KW_TULOY</font>>];
+    S_ULAM     [label=<<b>q_ULAM</b><br/>ULAM<br/><font point-size="9" color="#333333">RW_ULAM</font>>];
+    S_ULIT     [label=<<b>q_ULIT</b><br/>ULIT<br/><font point-size="9" color="#333333">KW_ULIT</font>>];
+    S_WALA     [label=<<b>q_WALA</b><br/>WALA<br/><font point-size="9" color="#333333">KW_WALA</font>>];
+    
+    // ---------------------------------------------------
+    // TRANSITIONS (Trie Construction)
+    // ---------------------------------------------------
+
+    // --- Uppercase 'O' family ---
+    S_START   -> S_O       [label=" 'O' "];
+    S_O       -> S_OR      [label=" 'R' "];
+    S_OR      -> S_ORD     [label=" 'D' "];
+    S_ORD     -> S_ORDE    [label=" 'E' "];
+    S_ORDE    -> S_ORDER   [label=" 'R' "];
+
+    // --- Uppercase 'R' family ---
+    S_START   -> S_R       [label=" 'R' "];
+    S_R       -> S_RE      [label=" 'E' "];
+    S_RE      -> S_RES     [label=" 'S' "];
+    S_RES     -> S_RESI    [label=" 'I' "];
+    S_RESI    -> S_RESIB   [label=" 'B' "];
+    S_RESIB   -> S_RESIBO  [label=" 'O' "];
+
+    // --- Uppercase 'S' family ---
+    S_START   -> S_S       [label=" 'S' "];
+    S_S       -> S_SA      [label=" 'A' "];
+    S_SA      -> S_SAL     [label=" 'L' "];
+    S_SAL     -> S_SALI    [label=" 'I' "];
+    S_SALI    -> S_SALIT   [label=" 'T' "];
+    S_SALIT    -> S_SALITA  [label=" 'T' "];
+
+    // --- Uppercase 'T' family ---
+    S_START   -> S_T       [label=" 'T' "];
+    S_T       -> S_TA      [label=" 'A' "];
+    S_TA      -> S_TAM     [label=" 'M' "];
+    S_TAM     -> S_TAMA    [label=" 'A' "];
+
+    S_T       -> S_TU      [label=" 'U' "];
+    S_TU      -> S_TUL     [label=" 'L' "];
+    S_TUL     -> S_TULO    [label=" 'O' "];
+    S_TULO    -> S_TULOY   [label=" 'Y' "];
+
+    // --- Uppercase 'U' family ---
+    S_START   -> S_U       [label=" 'U' "];
+    S_U       -> S_UL      [label=" 'L' "];
+    S_UL      -> S_ULA     [label=" 'A' "];
+    S_ULA     -> S_ULAM    [label=" 'M' "];
+
+    S_UL      -> S_ULI     [label=" 'I' "];
+    S_ULI     -> S_ULIT    [label=" 'T' "];
+
+    // --- Uppercase 'W' family ---
+    S_START   -> S_W       [label=" 'W' "];
+    S_W       -> S_WA      [label=" 'A' "];
+    S_WA      -> S_WAL     [label=" 'L' "];
+    S_WAL     -> S_WALA    [label=" 'A' "];
+}

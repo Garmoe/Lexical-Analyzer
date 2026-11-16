@@ -1,0 +1,121 @@
+digraph DFA_Delimiters_Brackets {
+    // Graph styling
+    rankdir=TB;
+    nodesep=0.4;
+    ranksep=0.7;
+    bgcolor="#FFFFFF";
+    fontname="Georgia";
+    fontsize=14;
+    labelloc="t";
+
+    // Default node attributes: smaller circles
+    node [
+        fontname="Georgia",
+        fontsize=10,
+        shape=circle,
+        style="filled,solid",
+        fillcolor="#FFFFFF",
+        color="#000000",
+        penwidth=1.3,
+        width=0.6,
+        height=0.6,
+        fixedsize=true
+    ];
+
+    // Default edge attributes
+    edge [
+        fontname="Consolas",
+        fontsize=10,
+        penwidth=1.2,
+        color="#000000"
+    ];
+
+    // Start state
+    start [shape=none, label="", width=0, height=0];
+    q0 [
+        shape=circle, 
+        label=<<b>q0</b><br/><font point-size="8">Start</font>>, 
+        width=0.7,
+        height=0.7
+    ];
+    start -> q0 [label="   START", fontname="Georgia"];
+
+    // -------------------------------------------------------------
+    // SUBGRAPH: ATOMIC DELIMITERS
+    // -------------------------------------------------------------
+    subgraph cluster_delimiters {
+        label="Punctuation Delimiters";
+        labelloc="b"; // Moves label to the bottom
+        fontname="Georgia";
+        fontsize=11;
+        style="dashed,rounded";
+        color="#666666";
+        bgcolor="#FAFAFA";
+
+        node [shape=doublecircle, width=0.6, height=0.6];
+        q1 [label=<<b>q1</b><br/><font point-size="7">TERM</font><br/><b>[ . ]</b>>];
+        q2 [label=<<b>q2</b><br/><font point-size="7">SEP</font><br/><b>[ , ]</b>>];
+        q3 [label=<<b>q3</b><br/><font point-size="7">ACC</font><br/><b>[ : ]</b>>];
+    }
+
+    // -------------------------------------------------------------
+    // SUBGRAPH: BRACKETS & SCOPE
+    // -------------------------------------------------------------
+    subgraph cluster_brackets {
+        label="Brackets & Scope";
+        labelloc="b"; // Moves label to the bottom
+        fontname="Georgia";
+        fontsize=11;
+        style="dashed,rounded";
+        color="#666666";
+        bgcolor="#FAFAFA";
+
+        node [shape=doublecircle, width=0.6, height=0.6];
+        q5 [label=<<b>q5</b><br/><font point-size="7">LPAREN</font><br/><b>[ ( ]</b>>];
+        q6 [label=<<b>q6</b><br/><font point-size="7">RPAREN</font><br/><b>[ ) ]</b>>];
+        q7 [label=<<b>q7</b><br/><font point-size="7">LBRACE</font><br/><b>[ { ]</b>>];
+        q8 [label=<<b>q8</b><br/><font point-size="7">RBRACE</font><br/><b>[ } ]</b>>];
+    }
+
+    // -------------------------------------------------------------
+    // SUBGRAPH: BOUNDARY DELIMITERS (STRING & CHAR LITERALS)
+    // -------------------------------------------------------------
+    subgraph cluster_boundaries {
+        label="Literal Boundary Delimiters";
+        labelloc="b"; // Moves label to the bottom
+        fontname="Georgia";
+        fontsize=11;
+        style="dashed,rounded";
+        color="#666666";
+        bgcolor="#FAFAFA";
+
+        node [shape=circle, width=0.6, height=0.6];
+        q9  [label=<<b>q9</b><br/><font point-size="7">Str</font>>];
+        q11 [label=<<b>q11</b><br/><font point-size="7">Char</font>>];
+        q12 [label=<<b>q12</b><br/><font point-size="7">Read</font>>];
+
+        node [shape=doublecircle, width=0.6, height=0.6];
+        q10 [label=<<b>q10</b><br/><font point-size="7">SALITA</font>>];
+        q13 [label=<<b>q13</b><br/><font point-size="7">LETRA</font>>];
+    }
+
+    // -------------------------------------------------------------
+    // TRANSITIONS
+    // -------------------------------------------------------------
+    q0 -> q1 [label=" . "];
+    q0 -> q2 [label=" , "];
+    q0 -> q3 [label=" : "];
+
+    q0 -> q5 [label=" ( "];
+    q0 -> q6 [label=" ) "];
+    q0 -> q7 [label=" { "];
+    q0 -> q8 [label=" } "];
+
+    q0 -> q9  [label=" \" "];
+    q9 -> q9  [label=" any ≠ \" ", fontsize=8];
+    q9 -> q10 [label=" \" "];
+
+    q0  -> q11 [label=" ' "];
+    q11 -> q12 [label=" any ≠ ' ", fontsize=8];
+    q12 -> q13 [label=" ' "];
+}

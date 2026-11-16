@@ -1,0 +1,109 @@
+digraph KeywordLexerFSM {
+    rankdir=TB;
+    compound=true;
+    ranksep = 0.3; // Reduces vertical distance between ranks (default is 0.75)
+    nodesep = 0.2; // Reduces horizontal distance between nodes in the same rank
+    
+    node [fontname="Georgia", fontsize=11];
+    edge [fontname="Consolas", fontsize=11];
+
+    // ---------------------------------------------------
+    // START STATE
+    // ---------------------------------------------------
+    node [shape=circle, width=0.9, height=0.9, fixedsize=true]; 
+    S_START [label=<<b>q0</b><br/><font point-size="9" color="#666666">(Start)</font>>];
+
+    // Entry arrow dummy node
+    node [shape=point, width=0]; 
+    ENTRY;
+    ENTRY -> S_START [label="   START", fontname="Georgia"];
+
+    // ---------------------------------------------------
+    // INTERMEDIATE STATES (Shared Prefixes)
+    // ---------------------------------------------------
+    node [shape=circle, width=0.9, height=0.9, fixedsize=true];
+    
+    // --- Lowercase 'a' branch ---
+    S_a      [label=<<b>q_a</b><br/>'a'>];
+    S_an     [label=<<b>q_an</b><br/>'an'>];
+
+    // --- Lowercase 'l' branch ---
+    S_l      [label=<<b>q_l</b><br/>'l'>];
+    S_la     [label=<<b>q_la</b><br/>'la'>];
+    S_lan    [label=<<b>q_lan</b><br/>'lan'>];
+
+    // --- Lowercase 'n' branch ---
+    S_n      [label=<<b>q_n</b><br/>'n'>];
+    S_nan    [label=<<b>q_nan</b><br/>'nan'>];
+
+    S_nga    [label=<<b>q_nga</b><br/>'nga'>];
+    S_ngan   [label=<<b>q_ngan</b><br/>'ngan'>];
+
+    S_ni     [label=<<b>q_ni</b><br/>'ni'>];
+    S_nit    [label=<<b>q_nit</b><br/>'nit'>];
+
+    // --- Lowercase 'o' branch ---
+    S_o      [label=<<b>q_o</b><br/>'o'>];
+    S_op     [label=<<b>q_op</b><br/>'op'>];
+
+    // --- Lowercase 'p' branch ---
+    S_p      [label=<<b>q_p</b><br/>'p'>];
+
+    // ---------------------------------------------------
+    // ACCEPTING STATES (Noise Words)
+    // ---------------------------------------------------
+    node [shape=doublecircle, width=0.9, height=0.9, fixedsize=true]; 
+
+    S_ANG    [label=<<b>q_ang</b><br/>ang>];
+    S_AT     [label=<<b>q_at</b><br/>at>];
+    S_AY     [label=<<b>q_ay</b><br/>ay>];
+    S_LANG   [label=<<b>q_lang</b><br/>lang>];
+    S_NA     [label=<<b>q_na</b><br/>na>];
+    S_NANG   [label=<<b>q_nang</b><br/>nang>];
+    S_NG     [label=<<b>q_ng</b><br/>ng>];
+    S_NGANI  [label=<<b>q_ngani</b><br/>ngani>];
+    S_NITO   [label=<<b>q_nito</b><br/>nito>];
+    S_OPO    [label=<<b>q_opo</b><br/>opo>];
+    S_PO     [label=<<b>q_po</b><br/>po>];
+    
+    // ---------------------------------------------------
+    // TRANSITIONS (Trie Construction)
+    // ---------------------------------------------------
+
+    // --- Lowercase 'a' family ---
+    S_START   -> S_a      [label=" 'a' "];
+    S_a       -> S_an     [label=" 'n' "];
+    S_an      -> S_ANG    [label=" 'g' "];
+    S_a       -> S_AT     [label=" 't' "];
+    S_a       -> S_AY     [label=" 'y' "];
+
+    // --- Lowercase 'l' family ---
+    S_START   -> S_l      [label=" 'l' "];
+    S_l       -> S_la     [label=" 'a' "];
+    S_la      -> S_lan    [label=" 'n' "];
+    S_lan     -> S_LANG   [label=" 'g' "];
+
+    // --- Lowercase 'n' family ---
+    S_START   -> S_n      [label=" 'n' "];
+    S_n       -> S_NA     [label=" 'a' "];
+    S_NA      -> S_nan    [label=" 'n' "];
+    S_nan     -> S_NANG   [label=" 'g' "];
+
+    S_n       -> S_NG     [label=" 'g' "];
+    S_NG      -> S_nga    [label=" 'a' "];
+    S_nga     -> S_ngan   [label=" 'n' "];
+    S_ngan    -> S_NGANI  [label=" 'i' "];
+
+    S_n       -> S_ni     [label=" 'i' "];
+    S_ni      -> S_nit    [label=" 't' "];
+    S_nit     -> S_NITO   [label=" 'o' "];
+
+    // --- Lowercase 'o' family ---
+    S_START   -> S_o      [label=" 'o' "];
+    S_o       -> S_op     [label=" 'p' "];
+    S_op      -> S_OPO    [label=" 'o' "];
+
+    // --- Lowercase 'p' family ---
+    S_START   -> S_p      [label=" 'p' "];
+    S_p       -> S_PO     [label=" 'o' "];
+}

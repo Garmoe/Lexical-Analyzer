@@ -1,0 +1,117 @@
+digraph KeywordLexerFSM {
+    rankdir=TB;
+    compound=true;
+    ranksep = 0.3; // Reduces vertical distance between ranks (default is 0.75)
+    nodesep = 0.2; // Reduces horizontal distance between nodes in the same rank
+    
+    node [fontname="Georgia", fontsize=11];
+    edge [fontname="Consolas", fontsize=11];
+
+    // ---------------------------------------------------
+    // START STATE
+    // ---------------------------------------------------
+    node [shape=circle, width=1.2, height=1.2, fixedsize=true]; 
+    S_START [label=<<b>q0</b><br/><font point-size="9" color="#666666">(Start)</font>>];
+
+    // Entry arrow dummy node
+    node [shape=point, width=0]; 
+    ENTRY;
+    ENTRY -> S_START [label="   START", fontname="Georgia"];
+
+    // ---------------------------------------------------
+    // INTERMEDIATE STATES (Shared Prefixes)
+    // ---------------------------------------------------
+    node [shape=circle, width=1.2, height=1.2, fixedsize=true];
+    
+    // --- Uppercase 'L' branch ---
+    S_L      [label=<<b>q_L</b><br/>'L'>];
+    S_LE     [label=<<b>q_LE</b><br/>'LE'>];
+    S_LET    [label=<<b>q_LET</b><br/>'LET'>];
+    S_LETR   [label=<<b>q_LETR</b><br/>'LETR'>];
+
+    S_LU     [label=<<b>q_LU</b><br/>'LU'>];
+    S_LUT    [label=<<b>q_LUT</b><br/>'LUT'>];
+
+    // --- Lowercase 'l' branch ---
+    S_l      [label=<<b>q_l</b><br/>'l'>];
+    S_li     [label=<<b>q_li</b><br/>'li'>];
+    S_lin    [label=<<b>q_lin</b><br/>'lin'>];
+    S_lini   [label=<<b>q_lini</b><br/>'lini'>];
+    S_linis  [label=<<b>q_linis</b><br/>'linis'>];
+    S_linisi [label=<<b>q_linisi</b><br/>'linisi'>];
+
+    // --- Uppercase 'M' branch ---
+    S_M      [label=<<b>q_M</b><br/>'M'>];
+    S_MA     [label=<<b>q_MA</b><br/>'MA'>];
+    S_MAL    [label=<<b>q_MAL</b><br/>'MAL'>];
+
+    // --- Lowercase 'm' branch ---
+    S_m      [label=<<b>q_m</b><br/>'m'>];
+    S_me     [label=<<b>q_me</b><br/>'me'>];
+    S_mer    [label=<<b>q_mer</b><br/>'mer'>];
+    S_mero   [label=<<b>q_mero</b><br/>'mero'>];
+
+    // --- Uppercase 'N' branch ---
+    S_N      [label=<<b>q_N</b><br/>'N'>];
+    S_NU     [label=<<b>q_NU</b><br/>'NU'>];
+    S_NUM    [label=<<b>q_NUM</b><br/>'NUM'>];
+    S_NUME   [label=<<b>q_NUME</b><br/>'NUME'>];
+    S_NUMER  [label=<<b>q_NUMER</b><br/>'NUMER'>];
+
+    // ---------------------------------------------------
+    // ACCEPTING STATES (Valid Keywords)
+    // ---------------------------------------------------
+    node [shape=doublecircle, width=1.4, height=1.2, fixedsize=true]; 
+
+    S_LETRA    [label=<<b>q_LETRA</b><br/>LETRA<br/><font point-size="9" color="#333333">KW_LETRA</font>>];
+    S_LUTO     [label=<<b>q_LUTO</b><br/>LUTO<br/><font point-size="9" color="#333333">RW_LUTO</font>>];
+    S_LINISIN  [label=<<b>q_linisin</b><br/>linisin<br/><font point-size="9" color="#333333">RW_LINISIN</font>>];
+    S_MALI     [label=<<b>q_MALI</b><br/>MALI<br/><font point-size="9" color="#333333">RW_MALI</font>>];
+    S_MERON    [label=<<b>q_meron</b><br/>meron<br/><font point-size="9" color="#333333">RW_MERON</font>>];
+    S_NUMERO   [label=<<b>q_NUMERO</b><br/>NUMERO<br/><font point-size="9" color="#333333">KW_NUMERO</font>>];
+    
+    // ---------------------------------------------------
+    // TRANSITIONS (Trie Construction)
+    // ---------------------------------------------------
+
+    // --- Uppercase 'L' family ---
+    S_START   -> S_L       [label=" 'L' "];
+    S_L       -> S_LE      [label=" 'E' "];
+    S_LE      -> S_LET     [label=" 'T' "];
+    S_LET     -> S_LETR    [label=" 'R' "];
+    S_LETR    -> S_LETRA   [label=" 'A' "];
+
+    S_L       -> S_LU      [label=" 'U' "];
+    S_LU      -> S_LUT     [label=" 'T' "];
+    S_LUT     -> S_LUTO    [label=" 'O' "];
+
+    // --- Lowercase 'l' family ---
+    S_START   -> S_l       [label=" 'l' "];
+    S_l       -> S_li      [label=" 'i' "];
+    S_li      -> S_lin     [label=" 'n' "];
+    S_lin     -> S_lini    [label=" 'i' "];
+    S_lini    -> S_linis   [label=" 's' "];
+    S_linis   -> S_linisi  [label=" 'i' "];
+    S_linisi  -> S_LINISIN [label=" 'n' "];
+
+    // --- Uppercase 'M' family ---
+    S_START   -> S_M       [label=" 'M' "];
+    S_M       -> S_MA      [label=" 'A' "];
+    S_MA      -> S_MAL     [label=" 'L' "];
+    S_MAL     -> S_MALI    [label=" 'I' "];
+
+    // --- Lowercase 'm' family ---
+    S_START   -> S_m       [label=" 'm' "];
+    S_m       -> S_me      [label=" 'e' "];
+    S_me      -> S_mer     [label=" 'r' "];
+    S_mer     -> S_mero    [label=" 'o' "];
+    S_mero    -> S_MERON   [label=" 'n' "];
+
+    // --- Uppercase 'N' family ---
+    S_START   -> S_N       [label=" 'N' "];
+    S_N       -> S_NU      [label=" 'U' "];
+    S_NU      -> S_NUM     [label=" 'M' "];
+    S_NUM     -> S_NUME    [label=" 'E' "];
+    S_NUME    -> S_NUMER   [label=" 'R' "];
+    S_NUMER   -> S_NUMERO  [label=" 'O' "];
+}

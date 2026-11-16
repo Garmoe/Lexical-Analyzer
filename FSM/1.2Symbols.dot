@@ -1,0 +1,61 @@
+digraph SymbolLexerFSM {
+    rankdir=TB;
+    compound=true;
+    node [fontname="Georgia", fontsize=11];
+    edge [fontname="Consolas", fontsize=11];
+
+    // ---------------------------------------------------
+    // START STATE
+    // ---------------------------------------------------
+    node [shape=circle, width=0.9, height=0.9, fixedsize=true]; 
+    S_START [label=<<b>q0</b><br/><font point-size="9" color="#666666">(Start)</font>>];
+    
+    // Intermediate Helper States
+    S_AMP   [label=<<b>q_amp</b><br/>Seen &amp;>]; 
+    S_BAR   [label=<<b>q_bar</b><br/>Seen |>]; 
+
+    // Entry arrow dummy node
+    node [shape=point, width=0]; 
+    ENTRY;
+    ENTRY -> S_START [label="  START ", fontname="Georgia"];
+
+    // ---------------------------------------------------
+    // ACCEPTING STATES (Cleaned up labels)
+    // ---------------------------------------------------
+    node [shape=doublecircle, width=0.9, height=0.9, fixedsize=true]; 
+
+    // Requested Order: ==, !=, >, <, >=, <=, !, &&, ||
+    S_ASSIGN  [label=<<b>q_assign</b><br/>=>];
+    S_EQUAL  [label=<<b>q_equal</b><br/>==>];
+    S_NEQ    [label=<<b>q_neq</b><br/>!=>];
+    S_GREAT   [label=<<b>q_great</b><br/>&gt;>];
+    S_LESS   [label=<<b>q_less</b><br/>&lt;>];
+    S_gEQUAL [label=<<b>q_gequal</b><br/>&gt;=>];
+    S_LEQUAL [label=<<b>q_lequal</b><br/>&lt;=>];
+    S_BANG   [label=<<b>q_bang</b><br/>!>];
+    S_AND    [label=<<b>q_and</b><br/>&amp;&amp;>];
+    S_OR     [label=<<b>q_or</b><br/>||>];
+
+    // ---------------------------------------------------
+    // TRANSITIONS
+    // ---------------------------------------------------
+
+
+    S_START -> S_ASSIGN [label=" '=' "];
+    S_ASSIGN -> S_EQUAL  [label=" '=' "];   
+
+    S_START -> S_BANG    [label=" '!' "];
+    S_BANG  -> S_NEQ     [label=" '=' "];   
+
+    S_START -> S_GREAT    [label=" '>' "];
+    S_GREAT  -> S_gEQUAL  [label=" '=' "];   
+
+    S_START -> S_LESS    [label=" '<' "];
+    S_LESS  -> S_LEQUAL  [label=" '=' "];   
+
+    S_START -> S_AMP     [label=" '&' "];
+    S_AMP   -> S_AND     [label=" '&' "];   
+
+    S_START -> S_BAR     [label=" '|' "];
+    S_BAR   -> S_OR      [label=" '|' "];   
+}

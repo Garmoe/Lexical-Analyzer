@@ -1,0 +1,137 @@
+digraph KeywordLexerFSM {
+    rankdir=TB;
+    compound=true;
+    ranksep = 0.3; // Reduces vertical distance between ranks (default is 0.75)
+    nodesep = 0.2; // Reduces horizontal distance between nodes in the same rank
+    
+    node [fontname="Georgia", fontsize=11];
+    edge [fontname="Consolas", fontsize=11];
+
+    // ---------------------------------------------------
+    // START STATE
+    // ---------------------------------------------------
+    node [shape=circle, width=1.2, height=1.2, fixedsize=true]; 
+    S_START [label=<<b>q0</b><br/><font point-size="9" color="#666666">(Start)</font>>];
+
+    // Entry arrow dummy node
+    node [shape=point, width=0]; 
+    ENTRY;
+    ENTRY -> S_START [label="   START", fontname="Georgia"];
+
+    // ---------------------------------------------------
+    // INTERMEDIATE STATES (Shared Prefixes)
+    // ---------------------------------------------------
+    node [shape=circle, width=1.2, height=1.2, fixedsize=true];
+    
+    // --- Lowercase 'i' branch ---
+    S_i      [label=<<b>q_i</b><br/>'i'>];
+    S_il    [label=<<b>q_il</b><br/>'il'>];
+    S_ila   [label=<<b>q_ila</b><br/>'ila'>];
+    S_ilag  [label=<<b>q_ilag</b><br/>'ilag'>];
+    S_ilaga [label=<<b>q_ilaga</b><br/>'ilaga'>];
+
+    S_ili  [label=<<b>q_ili</b><br/>'ili'>];
+    S_ilim  [label=<<b>q_ilim</b><br/>'ilim'>];
+    S_ilimb  [label=<<b>q_ilimb</b><br/>'ilimb'>];
+    S_ilimba [label=<<b>q_ilimba</b><br/>'ilimba'>];
+
+    // --- Uppercase 'K' branch ---
+    S_K      [label=<<b>q_K</b><br/>'K'>];
+    S_KA     [label=<<b>q_KA</b><br/>'KA'>];
+    S_KAT    [label=<<b>q_KAT</b><br/>'KAT'>];
+    S_KATU   [label=<<b>q_KATU</b><br/>'KATU'>];
+    S_KATUM [label=<<b>q_KATUM</b><br/>'KATUM'>];
+    S_KATUMB  [label=<<b>q_KATUMB</b><br/>'KATUMB'>];
+    S_KATUMBA [label=<<b>q_KATUMBA</b><br/>'KATUMBA'>];
+
+    S_KU     [label=<<b>q_KU</b><br/>'KU'>];
+    S_KUN   [label=<<b>q_KUN</b><br/>'KUN'>];
+    S_KUND  [label=<<b>q_KUND</b><br/>'KUND'>];
+    S_KUNDIS  [label=<<b>q_KUNDIS</b><br/>'KUNDIS'>];
+    S_KUNDISY [label=<<b>q_KUNDISY</b><br/>'KUNDISY'>];
+    S_KUNDISYO [label=<<b>q_KUNDISYO</b><br/>'KUNDISYO'>];
+
+// --- Lowercase 'k' branch ---
+    S_k      [label=<<b>q_k</b><br/>'k'>];
+    S_ka     [label=<<b>q_ka</b><br/>'ka'>];
+    S_kal    [label=<<b>q_kal</b><br/>'kal'>];
+    S_kalk   [label=<<b>q_kalk</b><br/>'kalk'>];
+    S_kalku  [label=<<b>q_kalku</b><br/>'kalku'>];
+    S_kalkul [label=<<b>q_kalkul</b><br/>'kalkul'>];
+
+    S_ku     [label=<<b>q_ku</b><br/>'ku'>];
+    S_kum     [label=<<b>q_kum</b><br/>'kum'>];
+    S_kumu   [label=<<b>q_kumu</b><br/>'kumu'>];
+    S_kumuh [label=<<b>q_kumuh</b><br/>'kumuh'>];
+
+    // ---------------------------------------------------
+    // ACCEPTING STATES (Valid Keywords)
+    // ---------------------------------------------------
+    node [shape=doublecircle, width=1.4, height=1.2, fixedsize=true]; 
+
+    S_ILAGAY     [label=<<b>q_ilagay</b><br/>ilagay<br/><font point-size="9" color="#333333">RW_ILAGAY</font>>];
+    S_ILIMBAG   [label=<<b>q_ilimbag</b><br/>ilimbag<br/><font point-size="9" color="#333333">RW_ILIMBAG</font>>];
+    S_KALKULA  [label=<<b>q_kalkula</b><br/>kalkula<br/><font point-size="9" color="#333333">RW_KALKULA</font>>];
+    S_KUMUHA   [label=<<b>q_KUMUHA</b><br/>KUMUHA<br/><font point-size="9" color="#333333">RW_KUMUHA</font>>];
+    S_KATUMBAS   [label=<<b>q_KATUMBAS</b><br/>KATUMBAS<br/><font point-size="9" color="#333333">RW_KATUMBAS</font>>];
+    S_KUNDI      [label=<<b>q_KUNDI</b><br/>KUNDI<br/><font point-size="9" color="#333333">KW_KUNDI</font>>];
+    S_KUNDISYON [label=<<b>q_KUNDISYON</b><br/>KUNDISYON<br/><font point-size="9" color="#333333">KW_KUNDISYON</font>>];
+    S_KUNG     [label=<<b>q_KUNG</b><br/>KUNG<br/><font point-size="9" color="#333333">KW_KUNG</font>>];
+    
+    // ---------------------------------------------------
+    // TRANSITIONS (Trie Construction)
+    // ---------------------------------------------------
+
+    // --- Lowercase 'i' family ---
+    S_START   -> S_i       [label=" 'i' "];
+    S_i       -> S_il      [label=" 'l' "];
+    
+    // ilagay: i-l-a-g-a-y
+    S_il      -> S_ila     [label=" 'a' "];
+    S_ila     -> S_ilag    [label=" 'g' "];
+    S_ilag    -> S_ilaga   [label=" 'a' "];
+    S_ilaga   -> S_ILAGAY  [label=" 'y' "];
+
+    // ilimbag: i-l-i-m-b-a-g
+    S_il      -> S_ili     [label=" 'i' "];
+    S_ili     -> S_ilim    [label=" 'm' "];
+    S_ilim    -> S_ilimb   [label=" 'b' "];
+    S_ilimb   -> S_ilimba  [label=" 'a' "];
+    S_ilimba  -> S_ILIMBAG [label=" 'g' "];
+
+    // --- Uppercase 'K' family ---
+    S_START   -> S_K       [label=" 'K' "];
+    S_K       -> S_KA      [label=" 'A' "];
+    S_KA      -> S_KAT     [label=" 'T' "];
+    S_KAT     -> S_KATU    [label=" 'U' "]; 
+    S_KATU    -> S_KATUM   [label=" 'M' "];
+    S_KATUM   -> S_KATUMB  [label=" 'B' "];
+    S_KATUMB  -> S_KATUMBA [label=" 'A' "];
+    S_KATUMBA -> S_KATUMBAS [label=" 'S' "];
+
+    S_K       -> S_KU      [label=" 'U' "];
+    S_KU      -> S_KUN     [label=" 'N' "];
+    S_KUN     -> S_KUND    [label=" 'D' "];
+    S_KUND    -> S_KUNDI [label=" 'I' "];
+    S_KUNDI -> S_KUNDIS [label=" 'S' "];
+    S_KUNDIS  -> S_KUNDISY [label=" 'Y' "];
+    S_KUNDISY -> S_KUNDISYO [label=" 'O' "];
+    S_KUNDISYO -> S_KUNDISYON [label=" 'N' "];
+
+    S_KUN     -> S_KUNG [label=" 'G' "];
+
+    // --- Lowercase 'k' family ---
+    S_START   -> S_k       [label=" 'k' "];
+    S_k       -> S_ka      [label=" 'a' "];
+    S_ka      -> S_kal     [label=" 'l' "];
+    S_kal     -> S_kalk    [label=" 'k' "];
+    S_kalk    -> S_kalku   [label=" 'u' "];
+    S_kalku   -> S_kalkul  [label=" 'l' "];
+    S_kalkul  -> S_KALKULA [label=" 'a' "];
+
+    S_k       -> S_ku      [label=" 'u' "];
+    S_ku      -> S_kum     [label=" 'm' "];
+    S_kum     -> S_kumu    [label=" 'u' "];
+    S_kumu    -> S_kumuh   [label=" 'h' "];
+    S_kumuh   -> S_KUMUHA  [label=" 'a' "];
+}
