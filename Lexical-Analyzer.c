@@ -164,7 +164,6 @@ void dfa_report_error(FILE *out, size_t line, size_t column, const char *message
 int lexer_read_source(const char *path, char **source, size_t *length);
 int lexer_scan(const char *source, size_t length, FILE *log, FILE *tokens);
 
-
 /* ================================================================= */
 /* 4. DFA IMPLEMENTATION                                             */
 /* ================================================================= */
@@ -1334,7 +1333,7 @@ void dfa_report_error(FILE *out, size_t line, size_t column, const char *message
 
 
 /* ================================================================= */
-/* 5. LEXER IMPLEMENTATION (from lexer.c)                  */
+/* 5. LEXER IMPLEMENTATION                                           */
 /* ================================================================= */
 
 static void write_trace_str(FILE *out, const char *kind, size_t line, size_t column, const char *display, const char *classification) {
@@ -1817,7 +1816,7 @@ int lexer_scan(const char *source, size_t length, FILE *log, FILE *tokens) {
 
 
 /* ================================================================= */
-/* 6. MAIN PROGRAM (from main.c)                                     */
+/* 6. MAIN PROGRAM                                                   */
 /* ================================================================= */
 
 static int copy_stream(FILE *source, FILE *destination) {
