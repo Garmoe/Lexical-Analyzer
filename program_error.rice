@@ -1,5 +1,5 @@
 @ Unsupported character: the lexer should report an unrecognized character.
-~
+~ # $ ;
 
 @ Missing closing quote: the lexer should report an unterminated string.
 SALITA _mensahe = "Hindi naisara ang string

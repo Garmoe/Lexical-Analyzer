@@ -1904,7 +1904,8 @@ int main(int argc, char **argv) {
     }
     fprintf(symbol_table, "\nCHARACTER-BY-CHARACTER SCAN AND DFA TRANSITIONS\n");
     fprintf(symbol_table, "ACCEPT rows show the final accepting state and token category.\n"
-                          "REJECT rows show lexemes that reached no accepting token state.\n");
+                          "REJECT rows show lexemes that reached no accepting token state.\n"
+                          "PASS rows show intermediate accepting states for multi-character lexemes.\n");
     if (!copy_stream(scan_log, symbol_table)) {
         fprintf(stderr, "Error writing DFA trace to '%s'.\n", SYMBOL_TABLE_FILE);
         fclose(scan_log); fclose(token_table); fclose(symbol_table);
